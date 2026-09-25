@@ -113,7 +113,18 @@
 <!-- 1日目 -->
 <div class="day-title">
   <span>1日目「天下と美人」</span>
-  <span class="day-subtotal" id="d1_total_disp">1.2万 pt</span>
+  <span class="day-subtotal" id="d1_total_disp">0 pt</span>
+</div>
+
+<div class="card">
+  <label>盛唐夜市（72時間分 + 自然経過22時間分 固定）</label>
+  <div class="fixed-val">25,098 pt 固定 (計94時間 / 250.98万人分)</div>
+</div>
+
+<div class="card">
+  <label>盛唐夜市：宣伝札 (1枚=10分間=4,450人=44.5pt)</label>
+  <input type="text" id="d1_senden" placeholder="枚数 (例: 100)" oninput="calc()">
+  <div class="sub-preview" id="d1_senden-p"></div>
 </div>
 
 <div class="card">
@@ -393,6 +404,8 @@ function fmtDayPt(pt) {
 
 function calc() {
   // --- 1日目 ---
+  const d1_sendenN = parseNum(document.getElementById('d1_senden').value);
+  const d1_sendenPt = d1_sendenN * 44.5;
   const d1_flowerN = parseNum(document.getElementById('d1_flower').value);
   const d1_flowerPt = d1_flowerN * 10;
   const d1_kanzashiN = parseNum(document.getElementById('d1_kanzashi').value);
@@ -400,9 +413,10 @@ function calc() {
   const d1_gyokuN = parseNum(document.getElementById('d1_gyoku').value);
   const d1_gyokuPt = d1_gyokuN * 100;
   const d1_shipPt = 12000;
+  const d1_nightFixedPt = 25098; // 盛唐夜市 94時間固定
   const d1_tsuboN = parseNum(document.getElementById('d1_tsubo').value);
   const d1_tsuboPt = d1_tsuboN * 20;
-  const d1_total = d1_flowerPt + d1_kanzashiPt + d1_gyokuPt + d1_shipPt + d1_tsuboPt;
+  const d1_total = d1_nightFixedPt + d1_sendenPt + d1_flowerPt + d1_kanzashiPt + d1_gyokuPt + d1_shipPt + d1_tsuboPt;
 
   // --- 2日目 ---
   const d2_tribN = parseNum(document.getElementById('d2_trib').value);
@@ -492,6 +506,7 @@ function calc() {
   document.getElementById('d6_total_disp').innerText = fmtDayPt(d6_total);
 
   // --- プレビュー表示更新 ---
+  document.getElementById('d1_senden-p').innerText = d1_sendenN ? `${d1_sendenN.toLocaleString()}枚 ➔ ${d1_sendenPt.toFixed(1)} pt` : '';
   document.getElementById('d1_flower-p').innerText = d1_flowerN ? `${d1_flowerN.toLocaleString()}個 ➔ ${d1_flowerPt.toLocaleString()} pt` : '';
   document.getElementById('d1_kanzashi-p').innerText = d1_kanzashiN ? `${d1_kanzashiN.toLocaleString()}個 ➔ ${d1_kanzashiPt.toLocaleString()} pt` : '';
   document.getElementById('d1_gyoku-p').innerText = d1_gyokuN ? `${d1_gyokuN.toLocaleString()}個 ➔ ${d1_gyokuPt.toLocaleString()} pt` : '';
