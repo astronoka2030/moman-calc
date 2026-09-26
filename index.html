@@ -31,19 +31,30 @@
   .bonus-title {
     font-weight: bold;
     color: #2980b9;
-    font-size: 0.9rem;
-    margin-bottom: 6px;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #aab7b8;
+    padding-bottom: 4px;
   }
-  .bonus-flex {
-    display: flex;
+  .bonus-grid {
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 8px;
-    align-items: center;
   }
-  .bonus-flex select, .bonus-flex input {
-    padding: 6px 8px;
-    font-size: 14px;
+  .bonus-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.82rem;
+    color: #2c3e50;
+    font-weight: bold;
+  }
+  .bonus-item select {
+    padding: 4px 6px;
+    font-size: 13px;
     border-radius: 4px;
     border: 1px solid #aab7b8;
+    background: #fff;
   }
   .day-title {
     background: #2c3e50;
@@ -152,27 +163,46 @@
 
 <h2>イベントポイント計算機 (全6日分)</h2>
 
-<!-- 技巧ボーナス設定 -->
+<!-- 技巧ボーナス個別設定 -->
 <div class="bonus-card">
-  <div class="bonus-title">技巧対決ポイントボーナス設定</div>
-  <div class="bonus-flex">
-    <select id="bonus_preset" onchange="syncBonus(this.value)">
-      <option value="0">0%</option>
-      <option value="10">10%</option>
-      <option value="20">20%</option>
-      <option value="30">30%</option>
-      <option value="40">40%</option>
-      <option value="50">50%</option>
-      <option value="60" selected>60%</option>
-      <option value="65">65%</option>
-      <option value="70">70%</option>
-      <option value="80">80%</option>
-      <option value="90">90%</option>
-      <option value="100">100%</option>
-    </select>
-    <span style="font-size:0.85rem;">直接入力:</span>
-    <input type="number" id="bonus_val" class="save-input" value="60" style="width:70px;" oninput="calc()">
-    <span style="font-size:0.85rem;">%</span>
+  <div class="bonus-title">技巧対決ポイントボーナス設定 (9種)</div>
+  <div class="bonus-grid">
+    <div class="bonus-item">
+      <span>1. 船団派遣 (蓄財の巻):</span>
+      <select id="b_ship" class="bonus-select" onchange="calc()"></select>
+    </div>
+    <div class="bonus-item">
+      <span>2. 知己の好感度上昇 (情義の巻):</span>
+      <select id="b_kokando" class="bonus-select" onchange="calc()"></select>
+    </div>
+    <div class="bonus-item">
+      <span>3. 虎杢の消費 (神行の巻):</span>
+      <select id="b_toramoku" class="bonus-select" onchange="calc()"></select>
+    </div>
+    <div class="bonus-item">
+      <span>4. 遠征スタミナ消費 (威徳の巻):</span>
+      <select id="b_stamina" class="bonus-select" onchange="calc()"></select>
+    </div>
+    <div class="bonus-item">
+      <span>5. 領地の資源生産 (善政の巻):</span>
+      <select id="b_resource" class="bonus-select" onchange="calc()"></select>
+    </div>
+    <div class="bonus-item">
+      <span>6. 研究 (匠心の巻):</span>
+      <select id="b_research" class="bonus-select" onchange="calc()"></select>
+    </div>
+    <div class="bonus-item">
+      <span>7. 土地獲得 (雄図の巻):</span>
+      <select id="b_land" class="bonus-select" onchange="calc()"></select>
+    </div>
+    <div class="bonus-item">
+      <span>8. 顧問選抜 (義集い巻):</span>
+      <select id="b_advisor" class="bonus-select" onchange="calc()"></select>
+    </div>
+    <div class="bonus-item">
+      <span>9. 通商緊急詔書の消費 (文心の巻):</span>
+      <select id="b_shosho" class="bonus-select" onchange="calc()"></select>
+    </div>
   </div>
 </div>
 
@@ -212,8 +242,8 @@
 </div>
 
 <div class="card">
-  <label>海上シルクロード（鄭和の宝船 4隻固定）</label>
-  <div class="fixed-val" id="d1_ship_disp">12,000 pt 固定</div>
+  <label>海上シルクロード（鄭和の宝船 4隻固定 / 船団派遣）</label>
+  <div class="fixed-val" id="d1_ship_disp">18,000 pt 固定</div>
 </div>
 
 <div class="card">
@@ -283,26 +313,26 @@
 </div>
 
 <div class="card">
-  <label>研究1分加速札 (1枚=2.4pt)</label>
+  <label>研究1分加速札 (1枚=2.4pt / 研究)</label>
   <input type="text" id="d3_res_acc" class="save-input" placeholder="例: 500" oninput="calc()">
   <div class="sub-preview" id="d3_res_acc-p"></div>
 </div>
 
 <div class="card">
-  <label>選択資源札 60分 (1枚=18pt)</label>
+  <label>選択資源札 60分 (1枚=18pt / 領地資源)</label>
   <input type="text" id="d3_res_card_60" class="save-input" placeholder="例: 50" oninput="calc()">
   <div class="sub-preview" id="d3_res_card_60-p"></div>
 </div>
 
 <div class="card">
-  <label>ランダム資源札 1分 (1枚=0.3pt)</label>
+  <label>ランダム資源札 1分 (1枚=0.3pt / 領地資源)</label>
   <input type="text" id="d3_res_card_1" class="save-input" placeholder="例: 1000" oninput="calc()">
   <div class="sub-preview" id="d3_res_card_1-p"></div>
 </div>
 
 <div class="card">
-  <label>自然経過資源生産 (0:00〜22:00 固定)</label>
-  <div class="fixed-val" id="d3_fixed_disp">396 pt 固定</div>
+  <label>自然経過資源生産 (0:00〜22:00 固定 / 領地資源)</label>
+  <div class="fixed-val" id="d3_fixed_disp">594 pt 固定</div>
 </div>
 
 <div class="card">
@@ -318,25 +348,25 @@
 </div>
 
 <div class="card">
-  <label>顧問選抜 (1回=3pt)</label>
+  <label>顧問選抜 (1回=3pt / 顧問選抜)</label>
   <input type="text" id="d4_advisor" class="save-input" placeholder="回数 (例: 10)" oninput="calc()">
   <div class="sub-preview" id="d4_advisor-p"></div>
 </div>
 
 <div class="card">
-  <label>土地売買証書 (1枚=1万土地=5pt)</label>
+  <label>土地売買証書 (1枚=1万土地=5pt / 土地獲得)</label>
   <input type="text" id="d4_land_cert" class="save-input" placeholder="枚数 (例: 50)" oninput="calc()">
   <div class="sub-preview" id="d4_land_cert-p"></div>
 </div>
 
 <div class="card">
-  <label>巡回 (1回=2.24万土地=11.2pt)</label>
+  <label>巡回 (1回=2.24万土地=11.2pt / 土地獲得)</label>
   <input type="text" id="d4_patrol" class="save-input" placeholder="回数 (例: 20)" oninput="calc()">
   <div class="sub-preview" id="d4_patrol-p"></div>
 </div>
 
 <div class="card">
-  <label>征戦クリア章数 (1章=3.925万土地=19.625pt)</label>
+  <label>征戦クリア章数 (1章=3.925万土地=19.625pt / 土地獲得)</label>
   <input type="text" id="d4_conquest" class="save-input" placeholder="進める章数 (例: 5)" oninput="calc()">
   <div class="sub-preview" id="d4_conquest-p"></div>
 </div>
@@ -359,14 +389,14 @@
 </div>
 
 <div class="card">
-  <label>シルクロード：通商緊急詔書 (1個=10pt)</label>
+  <label>シルクロード：通商緊急詔書 (1個=10pt / 詔書消費)</label>
   <input type="text" id="d5_詔書" class="save-input" placeholder="個数 (例: 1.49万)" oninput="calc()">
   <div class="sub-preview" id="d5_詔書-p"></div>
 </div>
 
 <div class="card">
-  <label>海上シルクロード（鄭和の宝船 4隻固定）</label>
-  <div class="fixed-val" id="d5_ship_disp">12,000 pt 固定</div>
+  <label>海上シルクロード（鄭和の宝船 4隻固定 / 船団派遣）</label>
+  <div class="fixed-val" id="d5_ship_disp">18,000 pt 固定</div>
 </div>
 
 <div class="card">
@@ -393,25 +423,25 @@
 </div>
 
 <div class="card">
-  <label>お花 (好感度+1 / 1個=10pt)</label>
+  <label>お花 (好感度+1 / 1個=10pt / 好感度)</label>
   <input type="text" id="d6_flower" class="save-input" placeholder="例: 100" oninput="calc()">
   <div class="sub-preview" id="d6_flower-p"></div>
 </div>
 
 <div class="card">
-  <label>簪 (好感度+3 / 1個=30pt)</label>
+  <label>簪 (好感度+3 / 1個=30pt / 好感度)</label>
   <input type="text" id="d6_kanzashi" class="save-input" placeholder="例: 50" oninput="calc()">
   <div class="sub-preview" id="d6_kanzashi-p"></div>
 </div>
 
 <div class="card">
-  <label>玉 (好感度+10 / 1個=100pt)</label>
+  <label>玉 (好感度+10 / 1個=100pt / 好感度)</label>
   <input type="text" id="d6_gyoku" class="save-input" placeholder="例: 100" oninput="calc()">
   <div class="sub-preview" id="d6_gyoku-p"></div>
 </div>
 
 <div class="card">
-  <label>虎杢 (1個=10pt)</label>
+  <label>虎杢 (1個=10pt / 虎杢消費)</label>
   <input type="text" id="d6_toramoku" class="save-input" placeholder="例: 1000" oninput="calc()">
   <div class="sub-preview" id="d6_toramoku-p"></div>
 </div>
@@ -451,9 +481,18 @@
 </div>
 
 <script>
-function syncBonus(val) {
-  document.getElementById('bonus_val').value = val;
-  calc();
+function initSelects() {
+  const selects = document.querySelectorAll('.bonus-select');
+  selects.forEach(sel => {
+    sel.innerHTML = '';
+    for (let i = 0; i <= 100; i += 5) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.innerText = i + '%';
+      if (i === 50) opt.selected = true; // 初期位置50%
+      sel.appendChild(opt);
+    }
+  });
 }
 
 function parseNum(val) {
@@ -475,10 +514,19 @@ function fmtDayPt(pt) {
   return `${floorPt.toLocaleString()} pt`;
 }
 
+function getMult(id) {
+  const val = parseFloat(document.getElementById(id).value) || 0;
+  return 1 + (val / 100);
+}
+
 function saveInputs() {
   const inputs = document.querySelectorAll('.save-input');
   inputs.forEach(input => {
     localStorage.setItem('moman_' + input.id, input.value);
+  });
+  const selects = document.querySelectorAll('.bonus-select');
+  selects.forEach(sel => {
+    localStorage.setItem('moman_' + sel.id, sel.value);
   });
 }
 
@@ -490,17 +538,19 @@ function loadInputs() {
       input.value = savedVal;
     }
   });
-  const savedBonus = localStorage.getItem('moman_bonus_val');
-  if (savedBonus !== null) {
-    document.getElementById('bonus_preset').value = savedBonus;
-  }
+  const selects = document.querySelectorAll('.bonus-select');
+  selects.forEach(sel => {
+    const savedVal = localStorage.getItem('moman_' + sel.id);
+    if (savedVal !== null) {
+      sel.value = savedVal;
+    }
+  });
 }
 
 function clearAll() {
   if (confirm('すべての入力数値をクリア（リセット）しますか？')) {
     const inputs = document.querySelectorAll('.save-input');
     inputs.forEach(input => {
-      if (input.id === 'bonus_val') return;
       input.value = '';
       localStorage.removeItem('moman_' + input.id);
     });
@@ -511,109 +561,117 @@ function clearAll() {
 function calc() {
   saveInputs();
 
-  const bonusPercent = parseFloat(document.getElementById('bonus_val').value) || 0;
-  const mult = 1 + (bonusPercent / 100);
+  // 各技巧の倍率（1 + ボーナス%）
+  const m_ship = getMult('b_ship');         // 1. 船団派遣
+  const m_kokando = getMult('b_kokando');   // 2. 知己好感度
+  const m_toramoku = getMult('b_toramoku'); // 3. 虎杢
+  const m_stamina = getMult('b_stamina');   // 4. 遠征スタミナ
+  const m_resource = getMult('b_resource');// 5. 領地資源
+  const m_research = getMult('b_research');// 6. 研究
+  const m_land = getMult('b_land');         // 7. 土地獲得
+  const m_advisor = getMult('b_advisor');   // 8. 顧問選抜
+  const m_shosho = getMult('b_shosho');     // 9. 詔書消費
 
   // --- 1日目 ---
   const d1_sendenN = parseNum(document.getElementById('d1_senden').value);
-  const d1_sendenPt = d1_sendenN * 44.5 * mult;
+  const d1_sendenPt = d1_sendenN * 44.5;
   const d1_flowerN = parseNum(document.getElementById('d1_flower').value);
-  const d1_flowerPt = d1_flowerN * 10 * mult;
+  const d1_flowerPt = d1_flowerN * 10 * m_kokando;
   const d1_kanzashiN = parseNum(document.getElementById('d1_kanzashi').value);
-  const d1_kanzashiPt = d1_kanzashiN * 30 * mult;
+  const d1_kanzashiPt = d1_kanzashiN * 30 * m_kokando;
   const d1_gyokuN = parseNum(document.getElementById('d1_gyoku').value);
-  const d1_gyokuPt = d1_gyokuN * 100 * mult;
-  const d1_shipPt = 12000 * mult;
-  const d1_nightFixedPt = 25098; // 夜市来客は通常ボーナス対象外
+  const d1_gyokuPt = d1_gyokuN * 100 * m_kokando;
+  const d1_shipPt = 12000 * m_ship;
+  const d1_nightFixedPt = 25098;
   const d1_tsuboN = parseNum(document.getElementById('d1_tsubo').value);
-  const d1_tsuboPt = d1_tsuboN * 20; // チャージは固定
+  const d1_tsuboPt = d1_tsuboN * 20;
   const d1_total = d1_nightFixedPt + d1_sendenPt + d1_flowerPt + d1_kanzashiPt + d1_gyokuPt + d1_shipPt + d1_tsuboPt;
 
   // --- 2日目 ---
   const d2_tribN = parseNum(document.getElementById('d2_trib').value);
   const d2_tribCount = Math.floor(d2_tribN / 100);
-  const d2_tribPt = d2_tribCount * 25 * mult;
+  const d2_tribPt = d2_tribCount * 25;
   const d2_sandN = parseNum(document.getElementById('d2_sand').value);
   const d2_sandTribTotal = d2_sandN * 57;
   const d2_sandCount = Math.floor(d2_sandTribTotal / 100);
-  const d2_sandPt = d2_sandCount * 25 * mult;
+  const d2_sandPt = d2_sandCount * 25;
   const d2_toramokuN = parseNum(document.getElementById('d2_toramoku').value);
-  const d2_toramokuPt = d2_toramokuN * 10 * mult;
+  const d2_toramokuPt = d2_toramokuN * 10 * m_toramoku;
   const d2_staminaN = parseNum(document.getElementById('d2_stamina').value);
-  const d2_staminaPt = d2_staminaN * 20 * mult;
+  const d2_staminaPt = d2_staminaN * 20 * m_stamina;
   const d2_nikumanN = parseNum(document.getElementById('d2_nikuman').value);
-  const d2_nikumanPt = d2_nikumanN * 3 * 20 * mult;
+  const d2_nikumanPt = d2_nikumanN * 3 * 20 * m_stamina;
   const d2_tsuboN = parseNum(document.getElementById('d2_tsubo').value);
   const d2_tsuboPt = d2_tsuboN * 20;
   const d2_total = d2_tribPt + d2_sandPt + d2_toramokuPt + d2_staminaPt + d2_nikumanPt + d2_tsuboPt;
 
   // --- 3日目 ---
   const d3_hyakkoN = parseNum(document.getElementById('d3_hyakko').value);
-  const d3_hyakkoPt = d3_hyakkoN * 3 * mult;
+  const d3_hyakkoPt = d3_hyakkoN * 3;
   const d3_tenkoN = parseNum(document.getElementById('d3_tenko').value);
-  const d3_tenkoPt = d3_tenkoN * 2 * mult;
+  const d3_tenkoPt = d3_tenkoN * 2;
   const d3_resAccN = parseNum(document.getElementById('d3_res_acc').value);
-  const d3_resAccPt = d3_resAccN * 2.4 * mult;
+  const d3_resAccPt = d3_resAccN * 2.4 * m_research;
   const d3_res60N = parseNum(document.getElementById('d3_res_card_60').value);
-  const d3_res60Pt = d3_res60N * 18 * mult;
+  const d3_res60Pt = d3_res60N * 18 * m_resource;
   const d3_res1N = parseNum(document.getElementById('d3_res_card_1').value);
-  const d3_res1Pt = d3_res1N * 0.3 * mult;
-  const d3_fixedPt = 396 * mult;
+  const d3_res1Pt = d3_res1N * 0.3 * m_resource;
+  const d3_fixedPt = 396 * m_resource;
   const d3_tsuboN = parseNum(document.getElementById('d3_tsubo').value);
   const d3_tsuboPt = d3_tsuboN * 20;
   const d3_total = d3_hyakkoPt + d3_tenkoPt + d3_resAccPt + d3_res60Pt + d3_res1Pt + d3_fixedPt + d3_tsuboPt;
 
   // --- 4日目 ---
   const d4_advisorN = parseNum(document.getElementById('d4_advisor').value);
-  const d4_advisorPt = d4_advisorN * 3 * mult;
+  const d4_advisorPt = d4_advisorN * 3 * m_advisor;
   const d4_landCertN = parseNum(document.getElementById('d4_land_cert').value);
-  const d4_landCertPt = d4_landCertN * 5 * mult;
+  const d4_landCertPt = d4_landCertN * 5 * m_land;
   const d4_patrolN = parseNum(document.getElementById('d4_patrol').value);
-  const d4_patrolPt = d4_patrolN * 11.2 * mult;
+  const d4_patrolPt = d4_patrolN * 11.2 * m_land;
   const d4_conquestN = parseNum(document.getElementById('d4_conquest').value);
-  const d4_conquestPt = d4_conquestN * 19.625 * mult;
+  const d4_conquestPt = d4_conquestN * 19.625 * m_land;
   const d4_tsuboN = parseNum(document.getElementById('d4_tsubo').value);
   const d4_tsuboPt = d4_tsuboN * 20;
   const d4_total = d4_advisorPt + d4_landCertPt + d4_patrolPt + d4_conquestPt + d4_tsuboPt;
 
   // --- 5日目 ---
   const d5_kangakuN = parseNum(document.getElementById('d5_kangaku').value);
-  const d5_kangakuPt = d5_kangakuN * 4.1 * mult;
+  const d5_kangakuPt = d5_kangakuN * 4.1;
   const d5_詔書N = parseNum(document.getElementById('d5_詔書').value);
-  const d5_詔書Pt = d5_詔書N * 10 * mult;
-  const d5_shipPt = 12000 * mult;
+  const d5_詔書Pt = d5_詔書N * 10 * m_shosho;
+  const d5_shipPt = 12000 * m_ship;
   const d5_tsuboN = parseNum(document.getElementById('d5_tsubo').value);
   const d5_tsuboPt = d5_tsuboN * 20;
   const d5_total = d5_kangakuPt + d5_詔書Pt + d5_shipPt + d5_tsuboPt;
 
   // --- 6日目 ---
-  const d6_fixedPt = 10000 * mult;
+  const d6_fixedPt = 10000;
   const d6_fukuryoN = parseNum(document.getElementById('d6_fukuryo').value);
-  const d6_fukuryoPt = d6_fukuryoN * 25 * mult;
+  const d6_fukuryoPt = d6_fukuryoN * 25;
   const d6_flowerN = parseNum(document.getElementById('d6_flower').value);
-  const d6_flowerPt = d6_flowerN * 10 * mult;
+  const d6_flowerPt = d6_flowerN * 10 * m_kokando;
   const d6_kanzashiN = parseNum(document.getElementById('d6_kanzashi').value);
-  const d6_kanzashiPt = d6_kanzashiN * 30 * mult;
+  const d6_kanzashiPt = d6_kanzashiN * 30 * m_kokando;
   const d6_gyokuN = parseNum(document.getElementById('d6_gyoku').value);
-  const d6_gyokuPt = d6_gyokuN * 100 * mult;
+  const d6_gyokuPt = d6_gyokuN * 100 * m_kokando;
   const d6_toramokuN = parseNum(document.getElementById('d6_toramoku').value);
-  const d6_toramokuPt = d6_toramokuN * 10 * mult;
+  const d6_toramokuPt = d6_toramokuN * 10 * m_toramoku;
   const d6_brickN = parseNum(document.getElementById('d6_brick').value);
-  const d6_brickPt = d6_brickN * 200 * mult;
+  const d6_brickPt = d6_brickN * 200;
   const d6_compassN = parseNum(document.getElementById('d6_compass').value);
-  const d6_compassPt = d6_compassN * 20 * mult;
+  const d6_compassPt = d6_compassN * 20;
   const d6_talismanN = parseNum(document.getElementById('d6_talisman').value);
-  const d6_talismanPt = d6_talismanN * 20 * mult;
+  const d6_talismanPt = d6_talismanN * 20;
   const d6_tsuboN = parseNum(document.getElementById('d6_tsubo').value);
   const d6_tsuboPt = d6_tsuboN * 20;
   const d6_total = d6_fixedPt + d6_fukuryoPt + d6_flowerPt + d6_kanzashiPt + d6_gyokuPt + d6_toramokuPt + d6_brickPt + d6_compassPt + d6_talismanPt + d6_tsuboPt;
 
   // --- 固定値表示の更新 ---
   document.getElementById('d1_night_disp').innerText = `${Math.floor(d1_nightFixedPt).toLocaleString()} pt 固定`;
-  document.getElementById('d1_ship_disp').innerText = `${Math.floor(d1_shipPt).toLocaleString()} pt 固定 (倍率反映)`;
-  document.getElementById('d3_fixed_disp').innerText = `${Math.floor(d3_fixedPt).toLocaleString()} pt 固定 (倍率反映)`;
-  document.getElementById('d5_ship_disp').innerText = `${Math.floor(d5_shipPt).toLocaleString()} pt 固定 (倍率反映)`;
-  document.getElementById('d6_fixed_disp').innerText = `${Math.floor(d6_fixedPt).toLocaleString()} pt 固定 (倍率反映)`;
+  document.getElementById('d1_ship_disp').innerText = `${Math.floor(d1_shipPt).toLocaleString()} pt 固定 (船団派遣倍率反映)`;
+  document.getElementById('d3_fixed_disp').innerText = `${Math.floor(d3_fixedPt).toLocaleString()} pt 固定 (領地資源倍率反映)`;
+  document.getElementById('d5_ship_disp').innerText = `${Math.floor(d5_shipPt).toLocaleString()} pt 固定 (船団派遣倍率反映)`;
+  document.getElementById('d6_fixed_disp').innerText = `${Math.floor(d6_fixedPt).toLocaleString()} pt 固定`;
 
   // --- 各日小計表示 ---
   document.getElementById('d1_total_disp').innerText = fmtDayPt(d1_total);
@@ -672,6 +730,7 @@ function calc() {
 }
 
 window.onload = function() {
+  initSelects();
   loadInputs();
   calc();
 };
