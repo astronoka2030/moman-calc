@@ -19,7 +19,31 @@
     text-align: center;
     color: #1a252f;
     font-size: 1.2rem;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+  }
+  .bonus-card {
+    background: #eaf2f8;
+    border: 2px solid #3498db;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  .bonus-title {
+    font-weight: bold;
+    color: #2980b9;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+  }
+  .bonus-flex {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .bonus-flex select, .bonus-flex input {
+    padding: 6px 8px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #aab7b8;
   }
   .day-title {
     background: #2c3e50;
@@ -128,6 +152,30 @@
 
 <h2>イベントポイント計算機 (全6日分)</h2>
 
+<!-- 技巧ボーナス設定 -->
+<div class="bonus-card">
+  <div class="bonus-title">技巧対決ポイントボーナス設定</div>
+  <div class="bonus-flex">
+    <select id="bonus_preset" onchange="syncBonus(this.value)">
+      <option value="0">0%</option>
+      <option value="10">10%</option>
+      <option value="20">20%</option>
+      <option value="30">30%</option>
+      <option value="40">40%</option>
+      <option value="50">50%</option>
+      <option value="60" selected>60%</option>
+      <option value="65">65%</option>
+      <option value="70">70%</option>
+      <option value="80">80%</option>
+      <option value="90">90%</option>
+      <option value="100">100%</option>
+    </select>
+    <span style="font-size:0.85rem;">直接入力:</span>
+    <input type="number" id="bonus_val" class="save-input" value="60" style="width:70px;" oninput="calc()">
+    <span style="font-size:0.85rem;">%</span>
+  </div>
+</div>
+
 <!-- 1日目 -->
 <div class="day-title">
   <span>1日目「天下と美人」</span>
@@ -136,7 +184,7 @@
 
 <div class="card">
   <label>盛唐夜市（72時間分 + 自然経過22時間分 固定 / 参考: 2.67万人/h）</label>
-  <div class="fixed-val">25,098 pt 固定 (計94時間 / 250.98万人分)</div>
+  <div class="fixed-val" id="d1_night_disp">25,098 pt 固定</div>
 </div>
 
 <div class="card">
@@ -165,7 +213,7 @@
 
 <div class="card">
   <label>海上シルクロード（鄭和の宝船 4隻固定）</label>
-  <div class="fixed-val">12,000 pt 固定</div>
+  <div class="fixed-val" id="d1_ship_disp">12,000 pt 固定</div>
 </div>
 
 <div class="card">
@@ -219,7 +267,7 @@
 <!-- 3日目 -->
 <div class="day-title">
   <span>3日目「富国裕民」</span>
-  <span class="day-subtotal" id="d3_total_disp">396 pt</span>
+  <span class="day-subtotal" id="d3_total_disp">0 pt</span>
 </div>
 
 <div class="card">
@@ -254,7 +302,7 @@
 
 <div class="card">
   <label>自然経過資源生産 (0:00〜22:00 固定)</label>
-  <div class="fixed-val">396 pt 固定 (1320分経過分)</div>
+  <div class="fixed-val" id="d3_fixed_disp">396 pt 固定</div>
 </div>
 
 <div class="card">
@@ -301,7 +349,7 @@
 <!-- 5日目 -->
 <div class="day-title">
   <span>5日目「遠方との通商」</span>
-  <span class="day-subtotal" id="d5_total_disp">1.2万 pt</span>
+  <span class="day-subtotal" id="d5_total_disp">0 pt</span>
 </div>
 
 <div class="card">
@@ -318,7 +366,7 @@
 
 <div class="card">
   <label>海上シルクロード（鄭和の宝船 4隻固定）</label>
-  <div class="fixed-val">12,000 pt 固定</div>
+  <div class="fixed-val" id="d5_ship_disp">12,000 pt 固定</div>
 </div>
 
 <div class="card">
@@ -330,12 +378,12 @@
 <!-- 6日目 -->
 <div class="day-title">
   <span>6日目「兵馬鍛錬」</span>
-  <span class="day-subtotal" id="d6_total_disp">1万 pt</span>
+  <span class="day-subtotal" id="d6_total_disp">0 pt</span>
 </div>
 
 <div class="card">
   <label>富貴栄華（最大200時間蓄積 固定）</label>
-  <div class="fixed-val">10,000 pt 固定 (50,000里分)</div>
+  <div class="fixed-val" id="d6_fixed_disp">10,000 pt 固定</div>
 </div>
 
 <div class="card">
@@ -403,6 +451,11 @@
 </div>
 
 <script>
+function syncBonus(val) {
+  document.getElementById('bonus_val').value = val;
+  calc();
+}
+
 function parseNum(val) {
   if (!val) return 0;
   val = val.trim().replace(/,/g, '');
@@ -437,12 +490,17 @@ function loadInputs() {
       input.value = savedVal;
     }
   });
+  const savedBonus = localStorage.getItem('moman_bonus_val');
+  if (savedBonus !== null) {
+    document.getElementById('bonus_preset').value = savedBonus;
+  }
 }
 
 function clearAll() {
   if (confirm('すべての入力数値をクリア（リセット）しますか？')) {
     const inputs = document.querySelectorAll('.save-input');
     inputs.forEach(input => {
+      if (input.id === 'bonus_val') return;
       input.value = '';
       localStorage.removeItem('moman_' + input.id);
     });
@@ -453,99 +511,109 @@ function clearAll() {
 function calc() {
   saveInputs();
 
+  const bonusPercent = parseFloat(document.getElementById('bonus_val').value) || 0;
+  const mult = 1 + (bonusPercent / 100);
+
   // --- 1日目 ---
   const d1_sendenN = parseNum(document.getElementById('d1_senden').value);
-  const d1_sendenPt = d1_sendenN * 44.5;
+  const d1_sendenPt = d1_sendenN * 44.5 * mult;
   const d1_flowerN = parseNum(document.getElementById('d1_flower').value);
-  const d1_flowerPt = d1_flowerN * 10;
+  const d1_flowerPt = d1_flowerN * 10 * mult;
   const d1_kanzashiN = parseNum(document.getElementById('d1_kanzashi').value);
-  const d1_kanzashiPt = d1_kanzashiN * 30;
+  const d1_kanzashiPt = d1_kanzashiN * 30 * mult;
   const d1_gyokuN = parseNum(document.getElementById('d1_gyoku').value);
-  const d1_gyokuPt = d1_gyokuN * 100;
-  const d1_shipPt = 12000;
-  const d1_nightFixedPt = 25098;
+  const d1_gyokuPt = d1_gyokuN * 100 * mult;
+  const d1_shipPt = 12000 * mult;
+  const d1_nightFixedPt = 25098; // 夜市来客は通常ボーナス対象外
   const d1_tsuboN = parseNum(document.getElementById('d1_tsubo').value);
-  const d1_tsuboPt = d1_tsuboN * 20;
+  const d1_tsuboPt = d1_tsuboN * 20; // チャージは固定
   const d1_total = d1_nightFixedPt + d1_sendenPt + d1_flowerPt + d1_kanzashiPt + d1_gyokuPt + d1_shipPt + d1_tsuboPt;
 
   // --- 2日目 ---
   const d2_tribN = parseNum(document.getElementById('d2_trib').value);
   const d2_tribCount = Math.floor(d2_tribN / 100);
-  const d2_tribPt = d2_tribCount * 25;
+  const d2_tribPt = d2_tribCount * 25 * mult;
   const d2_sandN = parseNum(document.getElementById('d2_sand').value);
   const d2_sandTribTotal = d2_sandN * 57;
   const d2_sandCount = Math.floor(d2_sandTribTotal / 100);
-  const d2_sandPt = d2_sandCount * 25;
+  const d2_sandPt = d2_sandCount * 25 * mult;
   const d2_toramokuN = parseNum(document.getElementById('d2_toramoku').value);
-  const d2_toramokuPt = d2_toramokuN * 10;
+  const d2_toramokuPt = d2_toramokuN * 10 * mult;
   const d2_staminaN = parseNum(document.getElementById('d2_stamina').value);
-  const d2_staminaPt = d2_staminaN * 20;
+  const d2_staminaPt = d2_staminaN * 20 * mult;
   const d2_nikumanN = parseNum(document.getElementById('d2_nikuman').value);
-  const d2_nikumanPt = d2_nikumanN * 3 * 20;
+  const d2_nikumanPt = d2_nikumanN * 3 * 20 * mult;
   const d2_tsuboN = parseNum(document.getElementById('d2_tsubo').value);
   const d2_tsuboPt = d2_tsuboN * 20;
   const d2_total = d2_tribPt + d2_sandPt + d2_toramokuPt + d2_staminaPt + d2_nikumanPt + d2_tsuboPt;
 
   // --- 3日目 ---
   const d3_hyakkoN = parseNum(document.getElementById('d3_hyakko').value);
-  const d3_hyakkoPt = d3_hyakkoN * 3;
+  const d3_hyakkoPt = d3_hyakkoN * 3 * mult;
   const d3_tenkoN = parseNum(document.getElementById('d3_tenko').value);
-  const d3_tenkoPt = d3_tenkoN * 2;
+  const d3_tenkoPt = d3_tenkoN * 2 * mult;
   const d3_resAccN = parseNum(document.getElementById('d3_res_acc').value);
-  const d3_resAccPt = d3_resAccN * 2.4;
+  const d3_resAccPt = d3_resAccN * 2.4 * mult;
   const d3_res60N = parseNum(document.getElementById('d3_res_card_60').value);
-  const d3_res60Pt = d3_res60N * 18;
+  const d3_res60Pt = d3_res60N * 18 * mult;
   const d3_res1N = parseNum(document.getElementById('d3_res_card_1').value);
-  const d3_res1Pt = d3_res1N * 0.3;
-  const d3_fixedPt = 396;
+  const d3_res1Pt = d3_res1N * 0.3 * mult;
+  const d3_fixedPt = 396 * mult;
   const d3_tsuboN = parseNum(document.getElementById('d3_tsubo').value);
   const d3_tsuboPt = d3_tsuboN * 20;
   const d3_total = d3_hyakkoPt + d3_tenkoPt + d3_resAccPt + d3_res60Pt + d3_res1Pt + d3_fixedPt + d3_tsuboPt;
 
   // --- 4日目 ---
   const d4_advisorN = parseNum(document.getElementById('d4_advisor').value);
-  const d4_advisorPt = d4_advisorN * 3;
+  const d4_advisorPt = d4_advisorN * 3 * mult;
   const d4_landCertN = parseNum(document.getElementById('d4_land_cert').value);
-  const d4_landCertPt = d4_landCertN * 5;
+  const d4_landCertPt = d4_landCertN * 5 * mult;
   const d4_patrolN = parseNum(document.getElementById('d4_patrol').value);
-  const d4_patrolPt = d4_patrolN * 11.2;
+  const d4_patrolPt = d4_patrolN * 11.2 * mult;
   const d4_conquestN = parseNum(document.getElementById('d4_conquest').value);
-  const d4_conquestPt = d4_conquestN * 19.625;
+  const d4_conquestPt = d4_conquestN * 19.625 * mult;
   const d4_tsuboN = parseNum(document.getElementById('d4_tsubo').value);
   const d4_tsuboPt = d4_tsuboN * 20;
   const d4_total = d4_advisorPt + d4_landCertPt + d4_patrolPt + d4_conquestPt + d4_tsuboPt;
 
   // --- 5日目 ---
   const d5_kangakuN = parseNum(document.getElementById('d5_kangaku').value);
-  const d5_kangakuPt = d5_kangakuN * 4.1;
+  const d5_kangakuPt = d5_kangakuN * 4.1 * mult;
   const d5_詔書N = parseNum(document.getElementById('d5_詔書').value);
-  const d5_詔書Pt = d5_詔書N * 10;
-  const d5_shipPt = 12000;
+  const d5_詔書Pt = d5_詔書N * 10 * mult;
+  const d5_shipPt = 12000 * mult;
   const d5_tsuboN = parseNum(document.getElementById('d5_tsubo').value);
   const d5_tsuboPt = d5_tsuboN * 20;
   const d5_total = d5_kangakuPt + d5_詔書Pt + d5_shipPt + d5_tsuboPt;
 
   // --- 6日目 ---
-  const d6_fixedPt = 10000;
+  const d6_fixedPt = 10000 * mult;
   const d6_fukuryoN = parseNum(document.getElementById('d6_fukuryo').value);
-  const d6_fukuryoPt = d6_fukuryoN * 25;
+  const d6_fukuryoPt = d6_fukuryoN * 25 * mult;
   const d6_flowerN = parseNum(document.getElementById('d6_flower').value);
-  const d6_flowerPt = d6_flowerN * 10;
+  const d6_flowerPt = d6_flowerN * 10 * mult;
   const d6_kanzashiN = parseNum(document.getElementById('d6_kanzashi').value);
-  const d6_kanzashiPt = d6_kanzashiN * 30;
+  const d6_kanzashiPt = d6_kanzashiN * 30 * mult;
   const d6_gyokuN = parseNum(document.getElementById('d6_gyoku').value);
-  const d6_gyokuPt = d6_gyokuN * 100;
+  const d6_gyokuPt = d6_gyokuN * 100 * mult;
   const d6_toramokuN = parseNum(document.getElementById('d6_toramoku').value);
-  const d6_toramokuPt = d6_toramokuN * 10;
+  const d6_toramokuPt = d6_toramokuN * 10 * mult;
   const d6_brickN = parseNum(document.getElementById('d6_brick').value);
-  const d6_brickPt = d6_brickN * 200;
+  const d6_brickPt = d6_brickN * 200 * mult;
   const d6_compassN = parseNum(document.getElementById('d6_compass').value);
-  const d6_compassPt = d6_compassN * 20;
+  const d6_compassPt = d6_compassN * 20 * mult;
   const d6_talismanN = parseNum(document.getElementById('d6_talisman').value);
-  const d6_talismanPt = d6_talismanN * 20;
+  const d6_talismanPt = d6_talismanN * 20 * mult;
   const d6_tsuboN = parseNum(document.getElementById('d6_tsubo').value);
   const d6_tsuboPt = d6_tsuboN * 20;
   const d6_total = d6_fixedPt + d6_fukuryoPt + d6_flowerPt + d6_kanzashiPt + d6_gyokuPt + d6_toramokuPt + d6_brickPt + d6_compassPt + d6_talismanPt + d6_tsuboPt;
+
+  // --- 固定値表示の更新 ---
+  document.getElementById('d1_night_disp').innerText = `${Math.floor(d1_nightFixedPt).toLocaleString()} pt 固定`;
+  document.getElementById('d1_ship_disp').innerText = `${Math.floor(d1_shipPt).toLocaleString()} pt 固定 (倍率反映)`;
+  document.getElementById('d3_fixed_disp').innerText = `${Math.floor(d3_fixedPt).toLocaleString()} pt 固定 (倍率反映)`;
+  document.getElementById('d5_ship_disp').innerText = `${Math.floor(d5_shipPt).toLocaleString()} pt 固定 (倍率反映)`;
+  document.getElementById('d6_fixed_disp').innerText = `${Math.floor(d6_fixedPt).toLocaleString()} pt 固定 (倍率反映)`;
 
   // --- 各日小計表示 ---
   document.getElementById('d1_total_disp').innerText = fmtDayPt(d1_total);
@@ -557,43 +625,43 @@ function calc() {
 
   // --- プレビュー表示 ---
   document.getElementById('d1_senden-p').innerText = d1_sendenN ? `${d1_sendenN.toLocaleString()}枚 ➔ ${d1_sendenPt.toFixed(1)} pt` : '';
-  document.getElementById('d1_flower-p').innerText = d1_flowerN ? `${d1_flowerN.toLocaleString()}個 ➔ ${d1_flowerPt.toLocaleString()} pt` : '';
-  document.getElementById('d1_kanzashi-p').innerText = d1_kanzashiN ? `${d1_kanzashiN.toLocaleString()}個 ➔ ${d1_kanzashiPt.toLocaleString()} pt` : '';
-  document.getElementById('d1_gyoku-p').innerText = d1_gyokuN ? `${d1_gyokuN.toLocaleString()}個 ➔ ${d1_gyokuPt.toLocaleString()} pt` : '';
+  document.getElementById('d1_flower-p').innerText = d1_flowerN ? `${d1_flowerN.toLocaleString()}個 ➔ ${d1_flowerPt.toFixed(1)} pt` : '';
+  document.getElementById('d1_kanzashi-p').innerText = d1_kanzashiN ? `${d1_kanzashiN.toLocaleString()}個 ➔ ${d1_kanzashiPt.toFixed(1)} pt` : '';
+  document.getElementById('d1_gyoku-p').innerText = d1_gyokuN ? `${d1_gyokuN.toLocaleString()}個 ➔ ${d1_gyokuPt.toFixed(1)} pt` : '';
   document.getElementById('d1_tsubo-p').innerText = d1_tsuboN ? `${d1_tsuboN.toLocaleString()}個 ➔ ${d1_tsuboPt.toLocaleString()} pt` : '';
 
-  document.getElementById('d2_trib-p').innerText = d2_tribN ? `祈祷${d2_tribCount.toLocaleString()}回分 ➔ ${d2_tribPt.toLocaleString()} pt` : '';
-  document.getElementById('d2_sand-p').innerText = d2_sandN ? `貢物${d2_sandTribTotal.toLocaleString()}個(祈祷${d2_sandCount.toLocaleString()}回分) ➔ ${d2_sandPt.toLocaleString()} pt` : '';
-  document.getElementById('d2_toramoku-p').innerText = d2_toramokuN ? `${d2_toramokuN.toLocaleString()}個 ➔ ${d2_toramokuPt.toLocaleString()} pt` : '';
-  document.getElementById('d2_stamina-p').innerText = d2_staminaN ? `${d2_staminaN.toLocaleString()} ➔ ${d2_staminaPt.toLocaleString()} pt` : '';
-  document.getElementById('d2_nikuman-p').innerText = d2_nikumanN ? `スタミナ${(d2_nikumanN*3).toLocaleString()} ➔ ${d2_nikumanPt.toLocaleString()} pt` : '';
+  document.getElementById('d2_trib-p').innerText = d2_tribN ? `祈祷${d2_tribCount.toLocaleString()}回分 ➔ ${d2_tribPt.toFixed(1)} pt` : '';
+  document.getElementById('d2_sand-p').innerText = d2_sandN ? `貢物${d2_sandTribTotal.toLocaleString()}個(祈祷${d2_sandCount.toLocaleString()}回分) ➔ ${d2_sandPt.toFixed(1)} pt` : '';
+  document.getElementById('d2_toramoku-p').innerText = d2_toramokuN ? `${d2_toramokuN.toLocaleString()}個 ➔ ${d2_toramokuPt.toFixed(1)} pt` : '';
+  document.getElementById('d2_stamina-p').innerText = d2_staminaN ? `${d2_staminaN.toLocaleString()} ➔ ${d2_staminaPt.toFixed(1)} pt` : '';
+  document.getElementById('d2_nikuman-p').innerText = d2_nikumanN ? `スタミナ${(d2_nikumanN*3).toLocaleString()} ➔ ${d2_nikumanPt.toFixed(1)} pt` : '';
   document.getElementById('d2_tsubo-p').innerText = d2_tsuboN ? `${d2_tsuboN.toLocaleString()}個 ➔ ${d2_tsuboPt.toLocaleString()} pt` : '';
 
-  document.getElementById('d3_hyakko-p').innerText = d3_hyakkoN ? `${d3_hyakkoN.toLocaleString()}個 ➔ ${d3_hyakkoPt.toLocaleString()} pt` : '';
-  document.getElementById('d3_tenko-p').innerText = d3_tenkoN ? `${d3_tenkoN.toLocaleString()}個 ➔ ${d3_tenkoPt.toLocaleString()} pt` : '';
+  document.getElementById('d3_hyakko-p').innerText = d3_hyakkoN ? `${d3_hyakkoN.toLocaleString()}個 ➔ ${d3_hyakkoPt.toFixed(1)} pt` : '';
+  document.getElementById('d3_tenko-p').innerText = d3_tenkoN ? `${d3_tenkoN.toLocaleString()}個 ➔ ${d3_tenkoPt.toFixed(1)} pt` : '';
   document.getElementById('d3_res_acc-p').innerText = d3_resAccN ? `${d3_resAccN.toLocaleString()}分 ➔ ${d3_resAccPt.toFixed(1)} pt` : '';
-  document.getElementById('d3_res_card_60-p').innerText = d3_res60N ? `${d3_res60N.toLocaleString()}枚 ➔ ${d3_res60Pt.toLocaleString()} pt` : '';
+  document.getElementById('d3_res_card_60-p').innerText = d3_res60N ? `${d3_res60N.toLocaleString()}枚 ➔ ${d3_res60Pt.toFixed(1)} pt` : '';
   document.getElementById('d3_res_card_1-p').innerText = d3_res1N ? `${d3_res1N.toLocaleString()}枚 ➔ ${d3_res1Pt.toFixed(1)} pt` : '';
   document.getElementById('d3_tsubo-p').innerText = d3_tsuboN ? `${d3_tsuboN.toLocaleString()}個 ➔ ${d3_tsuboPt.toLocaleString()} pt` : '';
 
-  document.getElementById('d4_advisor-p').innerText = d4_advisorN ? `${d4_advisorN.toLocaleString()}回 ➔ ${d4_advisorPt.toLocaleString()} pt` : '';
-  document.getElementById('d4_land_cert-p').innerText = d4_landCertN ? `${d4_landCertN.toLocaleString()}枚 ➔ ${d4_landCertPt.toLocaleString()} pt` : '';
+  document.getElementById('d4_advisor-p').innerText = d4_advisorN ? `${d4_advisorN.toLocaleString()}回 ➔ ${d4_advisorPt.toFixed(1)} pt` : '';
+  document.getElementById('d4_land_cert-p').innerText = d4_landCertN ? `${d4_landCertN.toLocaleString()}枚 ➔ ${d4_landCertPt.toFixed(1)} pt` : '';
   document.getElementById('d4_patrol-p').innerText = d4_patrolN ? `${d4_patrolN.toLocaleString()}回 ➔ ${d4_patrolPt.toFixed(1)} pt` : '';
   document.getElementById('d4_conquest-p').innerText = d4_conquestN ? `${d4_conquestN.toLocaleString()}章 ➔ ${d4_conquestPt.toFixed(2)} pt` : '';
   document.getElementById('d4_tsubo-p').innerText = d4_tsuboN ? `${d4_tsuboN.toLocaleString()}個 ➔ ${d4_tsuboPt.toLocaleString()} pt` : '';
 
-  document.getElementById('d5_kangaku-p').innerText = d5_kangakuN ? `${d5_kangakuN.toLocaleString()}枚(育成${(d5_kangakuN*410).toLocaleString()}人) ➔ ${d5_kangakuPt.toFixed(1)} pt` : '';
-  document.getElementById('d5_詔書-p').innerText = d5_詔書N ? `${d5_詔書N.toLocaleString()}個 ➔ ${d5_詔書Pt.toLocaleString()} pt` : '';
+  document.getElementById('d5_kangaku-p').innerText = d5_kangakuN ? `${d5_kangakuN.toLocaleString()}枚 ➔ ${d5_kangakuPt.toFixed(1)} pt` : '';
+  document.getElementById('d5_詔書-p').innerText = d5_詔書N ? `${d5_詔書N.toLocaleString()}個 ➔ ${d5_詔書Pt.toFixed(1)} pt` : '';
   document.getElementById('d5_tsubo-p').innerText = d5_tsuboN ? `${d5_tsuboN.toLocaleString()}個 ➔ ${d5_tsuboPt.toLocaleString()} pt` : '';
 
-  document.getElementById('d6_fukuryo-p').innerText = d6_fukuryoN ? `${d6_fukuryoN.toLocaleString()}個 ➔ ${d6_fukuryoPt.toLocaleString()} pt` : '';
-  document.getElementById('d6_flower-p').innerText = d6_flowerN ? `${d6_flowerN.toLocaleString()}個 ➔ ${d6_flowerPt.toLocaleString()} pt` : '';
-  document.getElementById('d6_kanzashi-p').innerText = d6_kanzashiN ? `${d6_kanzashiN.toLocaleString()}個 ➔ ${d6_kanzashiPt.toLocaleString()} pt` : '';
-  document.getElementById('d6_gyoku-p').innerText = d6_gyokuN ? `${d6_gyokuN.toLocaleString()}個 ➔ ${d6_gyokuPt.toLocaleString()} pt` : '';
-  document.getElementById('d6_toramoku-p').innerText = d6_toramokuN ? `${d6_toramokuN.toLocaleString()}個 ➔ ${d6_toramokuPt.toLocaleString()} pt` : '';
-  document.getElementById('d6_brick-p').innerText = d6_brickN ? `${d6_brickN.toLocaleString()}個 ➔ ${d6_brickPt.toLocaleString()} pt` : '';
-  document.getElementById('d6_compass-p').innerText = d6_compassN ? `${d6_compassN.toLocaleString()}個 ➔ ${d6_compassPt.toLocaleString()} pt` : '';
-  document.getElementById('d6_talisman-p').innerText = d6_talismanN ? `${d6_talismanN.toLocaleString()}個 ➔ ${d6_talismanPt.toLocaleString()} pt` : '';
+  document.getElementById('d6_fukuryo-p').innerText = d6_fukuryoN ? `${d6_fukuryoN.toLocaleString()}個 ➔ ${d6_fukuryoPt.toFixed(1)} pt` : '';
+  document.getElementById('d6_flower-p').innerText = d6_flowerN ? `${d6_flowerN.toLocaleString()}個 ➔ ${d6_flowerPt.toFixed(1)} pt` : '';
+  document.getElementById('d6_kanzashi-p').innerText = d6_kanzashiN ? `${d6_kanzashiN.toLocaleString()}個 ➔ ${d6_kanzashiPt.toFixed(1)} pt` : '';
+  document.getElementById('d6_gyoku-p').innerText = d6_gyokuN ? `${d6_gyokuN.toLocaleString()}個 ➔ ${d6_gyokuPt.toFixed(1)} pt` : '';
+  document.getElementById('d6_toramoku-p').innerText = d6_toramokuN ? `${d6_toramokuN.toLocaleString()}個 ➔ ${d6_toramokuPt.toFixed(1)} pt` : '';
+  document.getElementById('d6_brick-p').innerText = d6_brickN ? `${d6_brickN.toLocaleString()}個 ➔ ${d6_brickPt.toFixed(1)} pt` : '';
+  document.getElementById('d6_compass-p').innerText = d6_compassN ? `${d6_compassN.toLocaleString()}個 ➔ ${d6_compassPt.toFixed(1)} pt` : '';
+  document.getElementById('d6_talisman-p').innerText = d6_talismanN ? `${d6_talismanN.toLocaleString()}個 ➔ ${d6_talismanPt.toFixed(1)} pt` : '';
   document.getElementById('d6_tsubo-p').innerText = d6_tsuboN ? `${d6_tsuboN.toLocaleString()}個 ➔ ${d6_tsuboPt.toLocaleString()} pt` : '';
 
   // --- 全体合計 ---
