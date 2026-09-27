@@ -284,8 +284,8 @@
 </div>
 
 <div class="card">
-  <label>遠征：回復薬 (1個=スタミナ1回復=20pt / 遠征スタミナ)</label>
-  <input type="text" id="d2_stamina" class="save-input" placeholder="回復薬の個数 (例: 50)" oninput="calc()">
+  <label>遠征スタミナ (1消費=20pt / 遠征スタミナ)</label>
+  <input type="text" id="d2_stamina" class="save-input" placeholder="消費スタミナ (例: 50)" oninput="calc()">
   <div class="sub-preview" id="d2_stamina-p"></div>
 </div>
 
@@ -369,7 +369,7 @@
 </div>
 
 <div class="card">
-  <label>巡回 (1回=2.24万土地=11.2pt / 土地獲得)</label>
+  <label>巡回：回復薬 (1回=2.24万土地=11.2pt / 土地獲得)</label>
   <input type="text" id="d4_patrol" class="save-input" placeholder="回数 (例: 20)" oninput="calc()">
   <div class="sub-preview" id="d4_patrol-p"></div>
 </div>
@@ -618,7 +618,7 @@ function calc() {
   const d2_toramokuN = parseNum(document.getElementById('d2_toramoku').value);
   const d2_toramokuPt = d2_toramokuN * 10 * m_toramoku;
   const d2_staminaN = parseNum(document.getElementById('d2_stamina').value);
-  const d2_staminaPt = d2_staminaN * 20 * m_stamina; // 回復薬1個 = スタミナ1回復 = 20pt
+  const d2_staminaPt = d2_staminaN * 20 * m_stamina;
   const d2_nikumanN = parseNum(document.getElementById('d2_nikuman').value);
   const d2_nikumanPt = d2_nikumanN * 3 * 20 * m_stamina;
   const d2_tsuboN = parseNum(document.getElementById('d2_tsubo').value);
@@ -716,7 +716,7 @@ function calc() {
   document.getElementById('d2_trib-p').innerText = d2_tribN ? `祈祷${d2_tribCount.toLocaleString()}回分 ➔ ${d2_tribPt.toFixed(1)} pt` : '';
   document.getElementById('d2_sand-p').innerText = d2_sandN ? `貢物${d2_sandTribTotal.toLocaleString()}個(祈祷${d2_sandCount.toLocaleString()}回分) ➔ ${d2_sandPt.toFixed(1)} pt` : '';
   document.getElementById('d2_toramoku-p').innerText = d2_toramokuN ? `${d2_toramokuN.toLocaleString()}個 ➔ ${d2_toramokuPt.toFixed(1)} pt` : '';
-  document.getElementById('d2_stamina-p').innerText = d2_staminaN ? `${d2_staminaN.toLocaleString()}個(スタミナ${d2_staminaN.toLocaleString()}回復) ➔ ${d2_staminaPt.toFixed(1)} pt` : '';
+  document.getElementById('d2_stamina-p').innerText = d2_staminaN ? `${d2_staminaN.toLocaleString()} ➔ ${d2_staminaPt.toFixed(1)} pt` : '';
   document.getElementById('d2_nikuman-p').innerText = d2_nikumanN ? `スタミナ${(d2_nikumanN*3).toLocaleString()}回復 ➔ ${d2_nikumanPt.toFixed(1)} pt` : '';
   document.getElementById('d2_tsubo-p').innerText = d2_tsuboN ? `${d2_tsuboN.toLocaleString()}個 ➔ ${d2_tsuboPt.toLocaleString()} pt` : '';
 
