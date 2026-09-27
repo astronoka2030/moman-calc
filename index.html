@@ -271,25 +271,26 @@
 
 <div class="card">
   <label>エジプト：砂時計 (1個=貢物57個)</label>
-  <input type="text" id="d2_sand" class="save-input" placeholder="例: 200" oninput="calc()">
+  <input type="text" id="d2_sand" class="save-input" placeholder="個数 (例: 200)" oninput="calc()">
+  <div class="note-text">※1個=貢物57個は参考値です</div>
   <div class="sub-preview" id="d2_sand-p"></div>
 </div>
 
 <div class="card">
-  <label>虎杢 (1個=10pt)</label>
+  <label>虎杢 (1個=10pt / 虎杢消費)</label>
   <input type="text" id="d2_toramoku" class="save-input" placeholder="例: 1000" oninput="calc()">
   <div class="note-text">※龍甲片の10倍以下の数値にしてください</div>
   <div class="sub-preview" id="d2_toramoku-p"></div>
 </div>
 
 <div class="card">
-  <label>遠征スタミナ (1消費=20pt)</label>
-  <input type="text" id="d2_stamina" class="save-input" placeholder="例: 50" oninput="calc()">
+  <label>遠征：回復薬 (1個=スタミナ1回復=20pt / 遠征スタミナ)</label>
+  <input type="text" id="d2_stamina" class="save-input" placeholder="回復薬の個数 (例: 50)" oninput="calc()">
   <div class="sub-preview" id="d2_stamina-p"></div>
 </div>
 
 <div class="card">
-  <label>肉まん (1個=スタミナ3回復=60pt)</label>
+  <label>肉まん (1個=スタミナ3回復=60pt / 遠征スタミナ)</label>
   <input type="text" id="d2_nikuman" class="save-input" placeholder="例: 20" oninput="calc()">
   <div class="sub-preview" id="d2_nikuman-p"></div>
 </div>
@@ -617,7 +618,7 @@ function calc() {
   const d2_toramokuN = parseNum(document.getElementById('d2_toramoku').value);
   const d2_toramokuPt = d2_toramokuN * 10 * m_toramoku;
   const d2_staminaN = parseNum(document.getElementById('d2_stamina').value);
-  const d2_staminaPt = d2_staminaN * 20 * m_stamina;
+  const d2_staminaPt = d2_staminaN * 20 * m_stamina; // 回復薬1個 = スタミナ1回復 = 20pt
   const d2_nikumanN = parseNum(document.getElementById('d2_nikuman').value);
   const d2_nikumanPt = d2_nikumanN * 3 * 20 * m_stamina;
   const d2_tsuboN = parseNum(document.getElementById('d2_tsubo').value);
@@ -715,8 +716,8 @@ function calc() {
   document.getElementById('d2_trib-p').innerText = d2_tribN ? `祈祷${d2_tribCount.toLocaleString()}回分 ➔ ${d2_tribPt.toFixed(1)} pt` : '';
   document.getElementById('d2_sand-p').innerText = d2_sandN ? `貢物${d2_sandTribTotal.toLocaleString()}個(祈祷${d2_sandCount.toLocaleString()}回分) ➔ ${d2_sandPt.toFixed(1)} pt` : '';
   document.getElementById('d2_toramoku-p').innerText = d2_toramokuN ? `${d2_toramokuN.toLocaleString()}個 ➔ ${d2_toramokuPt.toFixed(1)} pt` : '';
-  document.getElementById('d2_stamina-p').innerText = d2_staminaN ? `${d2_staminaN.toLocaleString()} ➔ ${d2_staminaPt.toFixed(1)} pt` : '';
-  document.getElementById('d2_nikuman-p').innerText = d2_nikumanN ? `スタミナ${(d2_nikumanN*3).toLocaleString()} ➔ ${d2_nikumanPt.toFixed(1)} pt` : '';
+  document.getElementById('d2_stamina-p').innerText = d2_staminaN ? `${d2_staminaN.toLocaleString()}個(スタミナ${d2_staminaN.toLocaleString()}回復) ➔ ${d2_staminaPt.toFixed(1)} pt` : '';
+  document.getElementById('d2_nikuman-p').innerText = d2_nikumanN ? `スタミナ${(d2_nikumanN*3).toLocaleString()}回復 ➔ ${d2_nikumanPt.toFixed(1)} pt` : '';
   document.getElementById('d2_tsubo-p').innerText = d2_tsuboN ? `${d2_tsuboN.toLocaleString()}個 ➔ ${d2_tsuboPt.toLocaleString()} pt` : '';
 
   document.getElementById('d3_hyakko-p').innerText = d3_hyakkoN ? `${d3_hyakkoN.toLocaleString()}個 ➔ ${d3_hyakkoPt.toFixed(1)} pt` : '';
