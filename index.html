@@ -392,7 +392,8 @@
 
 <div class="card">
   <label>諸子百家（72時間分 + 自然経過22時間分 固定 / 410人/分）</label>
-  <div class="fixed-val" id="d5_fixed_kangaku_disp">3,854 pt 固定 (計94時間 / 38.54万人分)</div>
+  <div class="note-text">※410人は参考値です</div>
+  <div class="fixed-val" id="d5_fixed_kangaku_disp" style="margin-top:2px;">3,854 pt 固定 (計94時間 / 38.54万人分)</div>
 </div>
 
 <div class="card">
@@ -656,7 +657,7 @@ function calc() {
   const d4_total = d4_advisorPt + d4_landCertPt + d4_patrolPt + d4_conquestPt + d4_tsuboPt;
 
   // --- 5日目 ---
-  const d5_fixedKangakuPt = 3854; // (72h + 22h = 94h = 5640分) * 410人 * 0.01pt = 3854.8pt -> 約3854pt
+  const d5_fixedKangakuPt = 3854;
   const d5_kangakuN = parseNum(document.getElementById('d5_kangaku').value);
   const d5_kangakuPt = d5_kangakuN * 4.1;
   const d5_詔書N = parseNum(document.getElementById('d5_詔書').value);
