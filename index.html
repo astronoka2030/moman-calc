@@ -113,6 +113,11 @@
     margin-top: 3px;
     min-height: 1.1em;
   }
+  .note-text {
+    font-size: 0.75rem;
+    color: #e74c3c;
+    margin-top: 2px;
+  }
   .result-box {
     background: #e8f8f5;
     border: 2px solid #2ecc71;
@@ -273,6 +278,7 @@
 <div class="card">
   <label>虎杢 (1個=10pt)</label>
   <input type="text" id="d2_toramoku" class="save-input" placeholder="例: 1000" oninput="calc()">
+  <div class="note-text">※龍甲片の10倍以下の数値にしてください</div>
   <div class="sub-preview" id="d2_toramoku-p"></div>
 </div>
 
@@ -331,8 +337,10 @@
 </div>
 
 <div class="card">
-  <label>自然経過資源生産 (0:00〜22:00 固定 / 領地資源)</label>
-  <div class="fixed-val" id="d3_fixed_disp">594 pt 固定</div>
+  <label>自然経過資源生産 品目数 (0:00〜22:00 / 領地資源)</label>
+  <input type="text" id="d3_item_count" class="save-input" placeholder="品目数 (例: 18)" value="18" oninput="calc()">
+  <div class="note-text">※コーヒー豆までで18品目です</div>
+  <div class="fixed-val" id="d3_fixed_disp" style="margin-top:4px;">10,692 pt 固定</div>
 </div>
 
 <div class="card">
@@ -380,6 +388,11 @@
 <div class="day-title">
   <span>5日目「遠方との通商」</span>
   <span class="day-subtotal" id="d5_total_disp">0 pt</span>
+</div>
+
+<div class="card">
+  <label>諸子百家（自然経過固定 / 410人/分 × 72時間 = 295,200人）</label>
+  <div class="fixed-val" id="d5_fixed_kangaku_disp">2,952 pt 固定</div>
 </div>
 
 <div class="card">
@@ -443,6 +456,7 @@
 <div class="card">
   <label>虎杢 (1個=10pt / 虎杢消費)</label>
   <input type="text" id="d6_toramoku" class="save-input" placeholder="例: 1000" oninput="calc()">
+  <div class="note-text">※龍甲片の10倍以下の数値にしてください</div>
   <div class="sub-preview" id="d6_toramoku-p"></div>
 </div>
 
@@ -489,7 +503,7 @@ function initSelects() {
       const opt = document.createElement('option');
       opt.value = i;
       opt.innerText = i + '%';
-      if (i === 50) opt.selected = true; // 初期位置50%
+      if (i === 50) opt.selected = true;
       sel.appendChild(opt);
     }
   });
@@ -551,7 +565,11 @@ function clearAll() {
   if (confirm('すべての入力数値をクリア（リセット）しますか？')) {
     const inputs = document.querySelectorAll('.save-input');
     inputs.forEach(input => {
-      input.value = '';
+      if (input.id === 'd3_item_count') {
+        input.value = '18';
+      } else {
+        input.value = '';
+      }
       localStorage.removeItem('moman_' + input.id);
     });
     calc();
@@ -561,7 +579,7 @@ function clearAll() {
 function calc() {
   saveInputs();
 
-  // 各技巧の倍率（1 + ボーナス%）
+  // 各技巧の倍率
   const m_ship = getMult('b_ship');         // 1. 船団派遣
   const m_kokando = getMult('b_kokando');   // 2. 知己好感度
   const m_toramoku = getMult('b_toramoku'); // 3. 虎杢
@@ -616,7 +634,10 @@ function calc() {
   const d3_res60Pt = d3_res60N * 18 * m_resource;
   const d3_res1N = parseNum(document.getElementById('d3_res_card_1').value);
   const d3_res1Pt = d3_res1N * 0.3 * m_resource;
-  const d3_fixedPt = 396 * m_resource;
+  
+  const d3_itemCount = parseNum(document.getElementById('d3_item_count').value);
+  const d3_fixedPt = 396 * d3_itemCount * m_resource;
+
   const d3_tsuboN = parseNum(document.getElementById('d3_tsubo').value);
   const d3_tsuboPt = d3_tsuboN * 20;
   const d3_total = d3_hyakkoPt + d3_tenkoPt + d3_resAccPt + d3_res60Pt + d3_res1Pt + d3_fixedPt + d3_tsuboPt;
@@ -635,6 +656,7 @@ function calc() {
   const d4_total = d4_advisorPt + d4_landCertPt + d4_patrolPt + d4_conquestPt + d4_tsuboPt;
 
   // --- 5日目 ---
+  const d5_fixedKangakuPt = 2952; // 410人 * 72時間(4320分) * 0.01pt = 2952pt
   const d5_kangakuN = parseNum(document.getElementById('d5_kangaku').value);
   const d5_kangakuPt = d5_kangakuN * 4.1;
   const d5_詔書N = parseNum(document.getElementById('d5_詔書').value);
@@ -642,7 +664,7 @@ function calc() {
   const d5_shipPt = 12000 * m_ship;
   const d5_tsuboN = parseNum(document.getElementById('d5_tsubo').value);
   const d5_tsuboPt = d5_tsuboN * 20;
-  const d5_total = d5_kangakuPt + d5_詔書Pt + d5_shipPt + d5_tsuboPt;
+  const d5_total = d5_fixedKangakuPt + d5_kangakuPt + d5_詔書Pt + d5_shipPt + d5_tsuboPt;
 
   // --- 6日目 ---
   const d6_fixedPt = 10000;
@@ -669,7 +691,8 @@ function calc() {
   // --- 固定値表示の更新 ---
   document.getElementById('d1_night_disp').innerText = `${Math.floor(d1_nightFixedPt).toLocaleString()} pt 固定`;
   document.getElementById('d1_ship_disp').innerText = `${Math.floor(d1_shipPt).toLocaleString()} pt 固定 (船団派遣倍率反映)`;
-  document.getElementById('d3_fixed_disp').innerText = `${Math.floor(d3_fixedPt).toLocaleString()} pt 固定 (領地資源倍率反映)`;
+  document.getElementById('d3_fixed_disp').innerText = `${Math.floor(d3_fixedPt).toLocaleString()} pt 固定 (×${d3_itemCount}品目 / 領地資源倍率反映)`;
+  document.getElementById('d5_fixed_kangaku_disp').innerText = `${Math.floor(d5_fixedKangakuPt).toLocaleString()} pt 固定`;
   document.getElementById('d5_ship_disp').innerText = `${Math.floor(d5_shipPt).toLocaleString()} pt 固定 (船団派遣倍率反映)`;
   document.getElementById('d6_fixed_disp').innerText = `${Math.floor(d6_fixedPt).toLocaleString()} pt 固定`;
 
