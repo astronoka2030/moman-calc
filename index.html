@@ -170,7 +170,7 @@
 
 <!-- 技巧ボーナス個別設定 -->
 <div class="bonus-card">
-  <div class="bonus-title">技巧ボーナス設定 (9種)</div>
+  <div class="bonus-title">技巧対決ポイントボーナス設定 (9種)</div>
   <div class="bonus-grid">
     <div class="bonus-item">
       <span>1. 船団派遣 (蓄財の巻):</span>
@@ -369,7 +369,7 @@
 </div>
 
 <div class="card">
-  <label>巡回：回復薬 (1回=2.24万土地=11.2pt / 土地獲得)</label>
+  <label>巡回 (1回=2.24万土地=11.2pt / 土地獲得)</label>
   <input type="text" id="d4_patrol" class="save-input" placeholder="回数 (例: 20)" oninput="calc()">
   <div class="sub-preview" id="d4_patrol-p"></div>
 </div>
@@ -378,6 +378,12 @@
   <label>征戦クリア章数 (1章=3.925万土地=19.625pt / 土地獲得)</label>
   <input type="text" id="d4_conquest" class="save-input" placeholder="進める章数 (例: 5)" oninput="calc()">
   <div class="sub-preview" id="d4_conquest-p"></div>
+</div>
+
+<div class="card">
+  <label>龍紋兵符 (1個=徴兵1回=25pt)</label>
+  <input type="text" id="d4_hyofu" class="save-input" placeholder="個数 (例: 10)" oninput="calc()">
+  <div class="sub-preview" id="d4_hyofu-p"></div>
 </div>
 
 <div class="card">
@@ -653,12 +659,13 @@ function calc() {
   const d4_patrolPt = d4_patrolN * 11.2 * m_land;
   const d4_conquestN = parseNum(document.getElementById('d4_conquest').value);
   const d4_conquestPt = d4_conquestN * 19.625 * m_land;
+  const d4_hyofuN = parseNum(document.getElementById('d4_hyofu').value);
+  const d4_hyofuPt = d4_hyofuN * 25;
   const d4_tsuboN = parseNum(document.getElementById('d4_tsubo').value);
   const d4_tsuboPt = d4_tsuboN * 20;
-  const d4_total = d4_advisorPt + d4_landCertPt + d4_patrolPt + d4_conquestPt + d4_tsuboPt;
+  const d4_total = d4_advisorPt + d4_landCertPt + d4_patrolPt + d4_conquestPt + d4_hyofuPt + d4_tsuboPt;
 
   // --- 5日目 ---
-  // 410人/分 × 60分 × 94時間 = 2,312,400人 ➔ 23,124 pt
   const d5_fixedKangakuPt = 410 * 60 * 94 * 0.01;
   const d5_kangakuN = parseNum(document.getElementById('d5_kangaku').value);
   const d5_kangakuPt = d5_kangakuN * 4.1;
@@ -732,6 +739,7 @@ function calc() {
   document.getElementById('d4_land_cert-p').innerText = d4_landCertN ? `${d4_landCertN.toLocaleString()}枚 ➔ ${d4_landCertPt.toFixed(1)} pt` : '';
   document.getElementById('d4_patrol-p').innerText = d4_patrolN ? `${d4_patrolN.toLocaleString()}回 ➔ ${d4_patrolPt.toFixed(1)} pt` : '';
   document.getElementById('d4_conquest-p').innerText = d4_conquestN ? `${d4_conquestN.toLocaleString()}章 ➔ ${d4_conquestPt.toFixed(2)} pt` : '';
+  document.getElementById('d4_hyofu-p').innerText = d4_hyofuN ? `${d4_hyofuN.toLocaleString()}個 ➔ ${d4_hyofuPt.toLocaleString()} pt` : '';
   document.getElementById('d4_tsubo-p').innerText = d4_tsuboN ? `${d4_tsuboN.toLocaleString()}個 ➔ ${d4_tsuboPt.toLocaleString()} pt` : '';
 
   document.getElementById('d5_kangaku-p').innerText = d5_kangakuN ? `${d5_kangakuN.toLocaleString()}枚 ➔ ${d5_kangakuPt.toFixed(1)} pt` : '';
