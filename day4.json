@@ -4,7 +4,8 @@
   "items": [
     { "id": "d4_advisor", "label": "顧問選抜 (1回=3pt / 顧問選抜)", "placeholder": "回数 (例: 10)", "unit_pt": 3, "tech_key": "b_advisor" },
     { "id": "d4_land_cert", "label": "土地売買証書 (1枚=1万土地=5pt / 土地獲得)", "placeholder": "枚数 (例: 50)", "unit_pt": 5, "tech_key": "b_land" },
-    { "id": "d4_patrol", "label": "巡回 (1回=2.24万土地=11.2pt / 土地獲得)", "placeholder": "回数 (例: 20)", "unit_pt": 11.2, "tech_key": "b_land" },
+    { "id": "d4_patrol_land_val", "label": "巡回1回の土地獲得数 (万土地)", "placeholder": "例: 2.24", "default_value": "2.24", "type": "d4_patrol_land_val", "help_img": "Screenshot_20261028_224605.jpg" },
+    { "id": "d4_patrol_item", "label": "巡回：回復薬 (1個=巡回1回分 / 土地重視)", "placeholder": "個数 (例: 50)", "type": "d4_patrol_item", "tech_key": "b_land" },
     { "id": "d4_conquest", "label": "征戦クリア章数 (1章=3.925万土地=19.625pt / 土地獲得)", "placeholder": "進める章数 (例: 5)", "unit_pt": 19.625, "tech_key": "b_land" },
     { "id": "d4_hyofu", "label": "龍紋兵符 (1個=徴兵1回=25pt)", "placeholder": "個数 (例: 10)", "unit_pt": 25 },
     { "id": "d4_tsubo", "label": "通宝使用数 (1個=20pt)", "placeholder": "例: 100", "unit_pt": 20 }
