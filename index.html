@@ -234,7 +234,8 @@
 <div id="image-modal" class="modal-overlay" onclick="closeModal()">
   <img id="modal-img" src="" alt="確認用画像">
 </div>
-<script>
+
+  <script>
 let configData = {};
 let techBonusData = [];
 let daysData = [];
@@ -323,7 +324,7 @@ function renderUI() {
       html += `
         <div class="card">
           <div class="label-container">
-            <label>盛唐夜市：来客速度 (万人/時間)</label>
+            <label>盛唐夜市：来客数 (万人/時間)</label>
             ${helpBtn}
           </div>
           <input type="text" id="d1_night_speed" class="save-input" placeholder="例: 2.67" value="${day.night_market.default_speed}" oninput="calc()">
@@ -331,14 +332,14 @@ function renderUI() {
         <div class="card">
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
             <input type="checkbox" id="d1_use_72h" class="save-check" checked onchange="calc()" style="width: auto;">
-            <span>貯めた時間分を含める (最大72時間)</span>
+            <span>盛唐夜市：貯めた時間分を含める (最大72時間)</span>
           </label>
           <input type="text" id="d1_night_72h" class="save-input" placeholder="時間 (例: 72)" value="${day.night_market.default_h72}" oninput="calc()">
         </div>
         <div class="card">
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
             <input type="checkbox" id="d1_use_22h" class="save-check" checked onchange="calc()" style="width: auto;">
-            <span>自然経過時間分を含める (最大22時間)</span>
+            <span>盛唐夜市：自然経過時間分を含める (最大22時間)</span>
           </label>
           <input type="text" id="d1_night_22h" class="save-input" placeholder="時間 (例: 22)" value="${day.night_market.default_h22}" oninput="calc()">
         </div>
@@ -351,7 +352,7 @@ function renderUI() {
       html += `
         <div class="card">
           <div class="label-container">
-            <label>諸子百家：学習速度 (人/分)</label>
+            <label>諸子百家：学習人数 (人/分)</label>
             ${helpBtn}
           </div>
           <input type="text" id="d5_kangaku_speed" class="save-input" placeholder="例: 410" value="${day.kangaku_market.default_speed}" oninput="calc()">
@@ -359,14 +360,14 @@ function renderUI() {
         <div class="card">
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
             <input type="checkbox" id="d5_use_72h" class="save-check" checked onchange="calc()" style="width: auto;">
-            <span>貯めた時間分を含める (最大72時間)</span>
+            <span>諸子百家：貯めた時間分を含める (最大72時間)</span>
           </label>
           <input type="text" id="d5_kangaku_72h" class="save-input" placeholder="時間 (例: 72)" value="${day.kangaku_market.default_h72}" oninput="calc()">
         </div>
         <div class="card">
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
             <input type="checkbox" id="d5_use_22h" class="save-check" checked onchange="calc()" style="width: auto;">
-            <span>自然経過時間分を含める (最大22時間)</span>
+            <span>諸子百家：自然経過時間分を含める (最大22時間)</span>
           </label>
           <input type="text" id="d5_kangaku_22h" class="save-input" placeholder="時間 (例: 22)" value="${day.kangaku_market.default_h22}" oninput="calc()">
         </div>
@@ -390,7 +391,7 @@ function renderUI() {
         html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder}" value="${item.default_value}" oninput="calc()">`;
         if (item.note) html += `<div class="note-text">${item.note}</div>`;
         html += `<div class="fixed-val" id="d3_fixed_disp" style="margin-top:4px;">0 pt 固定</div>`;
-      } else if (item.type === 'sand_ratio' || item.type === 'kangaku_card_people') {
+      } else if (item.type === 'sand_ratio' || item.type === 'kangaku_card_people' || item.type === 'd4_patrol_land_val') {
         html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder}" value="${item.default_value}" oninput="calc()">`;
         if (item.note) html += `<div class="note-text">${item.note}</div>`;
       } else {
@@ -464,6 +465,7 @@ function clearAll() {
       else if (input.id === 'd1_night_72h') input.value = '72';
       else if (input.id === 'd1_night_22h') input.value = '22';
       else if (input.id === 'd2_sand_ratio') input.value = '57';
+      else if (input.id === 'd4_patrol_land_val') input.value = '2.24';
       else if (input.id === 'd5_kangaku_speed') input.value = '410';
       else if (input.id === 'd5_kangaku_card_people') input.value = '410';
       else if (input.id === 'd5_kangaku_72h') input.value = '72';
@@ -519,12 +521,21 @@ function calc() {
       }
       else if (item.type === 'patrol_item') {
         const itemN = parseNum(document.getElementById(item.id).value);
-        // 回復薬1個 = 巡回1回分
-        // 1回あたり: 土地確定2.24万(=11.2pt) + 知己好感度(基礎20.8pt × 情義倍率)
         const baseLandPt = 11.2;
         const kokandoPtPerTimes = 20.8 * mult;
         itemPt = itemN * (baseLandPt + kokandoPtPerTimes);
         
+        const pEl = document.getElementById(`${item.id}-p`);
+        if (pEl) pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (巡回${itemN.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt` : '';
+      }
+      else if (item.type === 'd4_patrol_item') {
+        const itemN = parseNum(document.getElementById(item.id).value);
+        const landVal = parseNum(document.getElementById('d4_patrol_land_val').value);
+        // 4日目: (土地万数値 × 5pt × 雄図倍率) + 知己好感度基礎(20.8pt ※倍率無)
+        const landPtPerTimes = landVal * 5 * mult;
+        const baseKokandoPt = 20.8;
+        itemPt = itemN * (landPtPerTimes + baseKokandoPt);
+
         const pEl = document.getElementById(`${item.id}-p`);
         if (pEl) pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (巡回${itemN.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt` : '';
       }
@@ -549,9 +560,9 @@ function calc() {
         const count = Math.floor(tribTotal / 100);
         itemPt = count * 25;
         const pEl = document.getElementById(`${item.id}-p`);
-        if (pEl) pEl.innerText = num ? `貢物${tribTotal.toLocaleString()}個(祈祷${count.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt` : '';
+        if (pEl) pEl.innerText = num ? `時の砂${num.toLocaleString()}個 (貢物${tribTotal.toLocaleString()}個 / 祈祷${count.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt` : '';
       }
-      else if (item.type === 'sand_ratio' || item.type === 'kangaku_card_people') {
+      else if (item.type === 'sand_ratio' || item.type === 'kangaku_card_people' || item.type === 'd4_patrol_land_val') {
         itemPt = 0;
       }
       else if (item.type === 'nikuman') {
