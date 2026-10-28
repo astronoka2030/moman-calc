@@ -4,7 +4,7 @@
   "items": [
     { "id": "d3_hyakko", "label": "百工図譜 (10個=30pt / 1個=3pt)", "placeholder": "例: 100", "unit_pt": 3 },
     { "id": "d3_tenko", "label": "天工の巻物 (10個=20pt / 1個=2pt)", "placeholder": "例: 100", "unit_pt": 2 },
-    { "id": "d3_res_acc", "label": "研究1分加速札 (1枚=2.4pt / 研究)", "placeholder": "例: 500", "unit_pt": 2.4, "tech_key": "b_research" },
+    { "id": "d3_res_acc", "label": "研究1分加速札 (1枚=2.4pt / 研究)", "placeholder": "例: 500", "note": "※研究・精研・技巧の完了時に経過時間分のポイントが入ります", "unit_pt": 2.4, "tech_key": "b_research" },
     { "id": "d3_res_card_60", "label": "選択資源札 60分 (1枚=18pt / 領地資源)", "placeholder": "例: 50", "unit_pt": 18, "tech_key": "b_resource" },
     { "id": "d3_res_card_1", "label": "ランダム資源札 1分 (1枚=0.3pt / 領地資源)", "placeholder": "例: 1000", "unit_pt": 0.3, "tech_key": "b_resource" },
     { "id": "d3_item_count", "label": "自然経過資源生産 品目数 (0:00〜22:00 / 領地資源)", "placeholder": "品目数 (例: 18)", "default_value": "18", "note": "※コーヒー豆までで18品目です", "type": "d3_resource_fixed", "base_per_item": 396, "tech_key": "b_resource" },
