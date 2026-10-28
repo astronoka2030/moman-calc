@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>イベントポイント計算機 (全6日分)</title>
+<title>同盟対決ポイント計算機 (全6日分)</title>
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-H1Z9NHRJ19"></script>
@@ -177,47 +177,47 @@
 </head>
 <body>
 
-<h2>イベントポイント計算機 (全6日分)</h2>
+<h2>同盟対決ポイント計算機 (全6日分)</h2>
 
 <!-- 技巧ボーナス個別設定 -->
 <div class="bonus-card">
   <div class="bonus-title">技巧対決ポイントボーナス設定 (9種)</div>
   <div class="bonus-grid">
     <div class="bonus-item">
-      <span>1. 船団派遣 (蓄財の巻):</span>
-      <select id="b_ship" class="bonus-select" onchange="calc()"></select>
-    </div>
-    <div class="bonus-item">
-      <span>2. 知己の好感度上昇 (情義の巻):</span>
-      <select id="b_kokando" class="bonus-select" onchange="calc()"></select>
-    </div>
-    <div class="bonus-item">
-      <span>3. 虎杢の消費 (神行の巻):</span>
-      <select id="b_toramoku" class="bonus-select" onchange="calc()"></select>
-    </div>
-    <div class="bonus-item">
-      <span>4. 遠征スタミナ消費 (威徳の巻):</span>
-      <select id="b_stamina" class="bonus-select" onchange="calc()"></select>
-    </div>
-    <div class="bonus-item">
-      <span>5. 領地の資源生産 (善政の巻):</span>
+      <span>1. 領地の資源生産 (善政の巻):</span>
       <select id="b_resource" class="bonus-select" onchange="calc()"></select>
     </div>
     <div class="bonus-item">
-      <span>6. 研究 (匠心の巻):</span>
-      <select id="b_research" class="bonus-select" onchange="calc()"></select>
+      <span>2. 虎杢の消費 (神行の巻):</span>
+      <select id="b_toramoku" class="bonus-select" onchange="calc()"></select>
     </div>
     <div class="bonus-item">
-      <span>7. 土地獲得 (雄図の巻):</span>
+      <span>3. 船団派遣 (蓄財の巻):</span>
+      <select id="b_ship" class="bonus-select" onchange="calc()"></select>
+    </div>
+    <div class="bonus-item">
+      <span>4. 土地獲得 (雄図の巻):</span>
       <select id="b_land" class="bonus-select" onchange="calc()"></select>
     </div>
     <div class="bonus-item">
-      <span>8. 顧問選抜 (義集い巻):</span>
+      <span>5. 知己の好感度上昇 (情義の巻):</span>
+      <select id="b_kokando" class="bonus-select" onchange="calc()"></select>
+    </div>
+    <div class="bonus-item">
+      <span>6. 通商緊急詔書の消費 (文心の巻):</span>
+      <select id="b_shosho" class="bonus-select" onchange="calc()"></select>
+    </div>
+    <div class="bonus-item">
+      <span>7. 顧問選抜 (義集い巻):</span>
       <select id="b_advisor" class="bonus-select" onchange="calc()"></select>
     </div>
     <div class="bonus-item">
-      <span>9. 通商緊急詔書の消費 (文心の巻):</span>
-      <select id="b_shosho" class="bonus-select" onchange="calc()"></select>
+      <span>8. 遠征スタミナ消費 (威徳の巻):</span>
+      <select id="b_stamina" class="bonus-select" onchange="calc()"></select>
+    </div>
+    <div class="bonus-item">
+      <span>9. 研究 (匠心の巻):</span>
+      <select id="b_research" class="bonus-select" onchange="calc()"></select>
     </div>
   </div>
 </div>
@@ -418,6 +418,7 @@
   <input type="text" id="d4_tsubo" class="save-input" placeholder="例: 100" oninput="calc()">
   <div class="sub-preview" id="d4_tsubo-p"></div>
 </div>
+  
 <!-- 5日目 -->
 <div class="day-title">
   <span>5日目「遠方との通商」</span>
@@ -632,15 +633,15 @@ function calc() {
   saveInputs();
 
   // 各技巧の倍率
-  const m_ship = getMult('b_ship');         // 1. 船団派遣
-  const m_kokando = getMult('b_kokando');   // 2. 知己好感度
-  const m_toramoku = getMult('b_toramoku'); // 3. 虎杢
-  const m_stamina = getMult('b_stamina');   // 4. 遠征スタミナ
-  const m_resource = getMult('b_resource');// 5. 領地資源
-  const m_research = getMult('b_research');// 6. 研究
-  const m_land = getMult('b_land');         // 7. 土地獲得
-  const m_advisor = getMult('b_advisor');   // 8. 顧問選抜
-  const m_shosho = getMult('b_shosho');     // 9. 詔書消費
+  const m_ship = getMult('b_ship');         // 船団派遣 (蓄財の巻)
+  const m_kokando = getMult('b_kokando');   // 知己好感度 (情義の巻)
+  const m_toramoku = getMult('b_toramoku'); // 虎杢 (神行の巻)
+  const m_stamina = getMult('b_stamina');   // 遠征スタミナ (威徳の巻)
+  const m_resource = getMult('b_resource');// 領地資源 (善政の巻)
+  const m_research = getMult('b_research');// 研究 (匠心の巻)
+  const m_land = getMult('b_land');         // 土地獲得 (雄図の巻)
+  const m_advisor = getMult('b_advisor');   // 顧問選抜 (義集い巻)
+  const m_shosho = getMult('b_shosho');     // 詔書消費 (文心の巻)
 
   // --- 1日目 ---
   const d1_speed = parseNum(document.getElementById('d1_night_speed').value);
