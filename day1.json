@@ -4,7 +4,8 @@
   "night_market": {
     "default_speed": "2.67",
     "default_h72": "72",
-    "default_h22": "22"
+    "default_h22": "22",
+    "help_img": "Screenshot_20261028_200625.jpg"
   },
   "items": [
     { "id": "d1_senden", "label": "盛唐夜市：宣伝札 (1枚=10分間)", "placeholder": "枚数 (例: 100)", "type": "senden" },
