@@ -229,12 +229,28 @@
 </div>
 
 <div class="card">
-  <label>盛唐夜市（72時間分 + 自然経過22時間分 固定 / 参考: 2.67万人/h）</label>
-  <div class="fixed-val" id="d1_night_disp">25,098 pt 固定</div>
+  <label>盛唐夜市：来客速度 (万人/時間)</label>
+  <input type="text" id="d1_night_speed" class="save-input" placeholder="例: 2.67" value="2.67" oninput="calc()">
 </div>
 
 <div class="card">
-  <label>盛唐夜市：宣伝札 (1枚=10分間=4,450人=44.5pt)</label>
+  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+    <input type="checkbox" id="d1_use_72h" class="save-check" checked onchange="calc()" style="width: auto;">
+    <span>貯めた時間分を含める (最大72時間)</span>
+  </label>
+  <input type="text" id="d1_night_72h" class="save-input" placeholder="時間 (例: 72)" value="72" oninput="calc()">
+</div>
+
+<div class="card">
+  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+    <input type="checkbox" id="d1_use_22h" class="save-check" checked onchange="calc()" style="width: auto;">
+    <span>自然経過時間分を含める (最大22時間)</span>
+  </label>
+  <input type="text" id="d1_night_22h" class="save-input" placeholder="時間 (例: 22)" value="22" oninput="calc()">
+</div>
+
+<div class="card">
+  <label>盛唐夜市：宣伝札 (1枚=10分間)</label>
   <input type="text" id="d1_senden" class="save-input" placeholder="枚数 (例: 100)" oninput="calc()">
   <div class="sub-preview" id="d1_senden-p"></div>
 </div>
@@ -267,7 +283,6 @@
   <input type="text" id="d1_tsubo" class="save-input" placeholder="例: 100" oninput="calc()">
   <div class="sub-preview" id="d1_tsubo-p"></div>
 </div>
-
 <!-- 2日目 -->
 <div class="day-title">
   <span>2日目「南征北伐」</span>
