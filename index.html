@@ -234,8 +234,7 @@
 <div id="image-modal" class="modal-overlay" onclick="closeModal()">
   <img id="modal-img" src="" alt="確認用画像">
 </div>
-
-  <script>
+<script>
 let configData = {};
 let techBonusData = [];
 let daysData = [];
@@ -521,9 +520,9 @@ function calc() {
       }
       else if (item.type === 'patrol_item') {
         const itemN = parseNum(document.getElementById(item.id).value);
-        const baseLandPt = 11.2;
+        // 1日目・6日目: 知己好感度基礎(20.8pt × 情義倍率)
         const kokandoPtPerTimes = 20.8 * mult;
-        itemPt = itemN * (baseLandPt + kokandoPtPerTimes);
+        itemPt = itemN * kokandoPtPerTimes;
         
         const pEl = document.getElementById(`${item.id}-p`);
         if (pEl) pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (巡回${itemN.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt` : '';
@@ -531,10 +530,10 @@ function calc() {
       else if (item.type === 'd4_patrol_item') {
         const itemN = parseNum(document.getElementById(item.id).value);
         const landVal = parseNum(document.getElementById('d4_patrol_land_val').value);
-        // 4日目: (土地万数値 × 5pt × 雄図倍率) + 知己好感度基礎(20.8pt ※倍率無)
+        // 4日目: (土地万数値 × 5pt × 雄図倍率) + ドロップ好感度アイテム基礎(4.467pt ※生好感度除外)
         const landPtPerTimes = landVal * 5 * mult;
-        const baseKokandoPt = 20.8;
-        itemPt = itemN * (landPtPerTimes + baseKokandoPt);
+        const dropItemPt = 4.467;
+        itemPt = itemN * (landPtPerTimes + dropItemPt);
 
         const pEl = document.getElementById(`${item.id}-p`);
         if (pEl) pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (巡回${itemN.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt` : '';
