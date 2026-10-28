@@ -98,7 +98,7 @@
     font-size: 0.85rem;
     color: #2c3e50;
   }
-  input {
+  input[type="text"] {
     width: 100%;
     padding: 8px 10px;
     font-size: 15px;
@@ -107,7 +107,7 @@
     box-sizing: border-box;
     background: #fafafa;
   }
-  input:focus {
+  input[type="text"]:focus {
     border-color: #3498db;
     outline: none;
     background: #fff;
@@ -283,6 +283,7 @@
   <input type="text" id="d1_tsubo" class="save-input" placeholder="例: 100" oninput="calc()">
   <div class="sub-preview" id="d1_tsubo-p"></div>
 </div>
+
 <!-- 2日目 -->
 <div class="day-title">
   <span>2日目「南征北伐」</span>
@@ -576,6 +577,10 @@ function saveInputs() {
   selects.forEach(sel => {
     localStorage.setItem('moman_' + sel.id, sel.value);
   });
+  const checks = document.querySelectorAll('.save-check');
+  checks.forEach(chk => {
+    localStorage.setItem('moman_' + chk.id, chk.checked);
+  });
 }
 
 function loadInputs() {
@@ -593,6 +598,13 @@ function loadInputs() {
       sel.value = savedVal;
     }
   });
+  const checks = document.querySelectorAll('.save-check');
+  checks.forEach(chk => {
+    const savedVal = localStorage.getItem('moman_' + chk.id);
+    if (savedVal !== null) {
+      chk.checked = (savedVal === 'true');
+    }
+  });
 }
 
 function clearAll() {
@@ -601,6 +613,12 @@ function clearAll() {
     inputs.forEach(input => {
       if (input.id === 'd3_item_count') {
         input.value = '18';
+      } else if (input.id === 'd1_night_speed') {
+        input.value = '2.67';
+      } else if (input.id === 'd1_night_72h') {
+        input.value = '72';
+      } else if (input.id === 'd1_night_22h') {
+        input.value = '22';
       } else {
         input.value = '';
       }
@@ -625,8 +643,17 @@ function calc() {
   const m_shosho = getMult('b_shosho');     // 9. 詔書消費
 
   // --- 1日目 ---
+  const d1_speed = parseNum(document.getElementById('d1_night_speed').value);
+  const d1_use72 = document.getElementById('d1_use_72h').checked;
+  const d1_h72 = d1_use72 ? parseNum(document.getElementById('d1_night_72h').value) : 0;
+  const d1_use22 = document.getElementById('d1_use_22h').checked;
+  const d1_h22 = d1_use22 ? parseNum(document.getElementById('d1_night_22h').value) : 0;
+  
+  const d1_nightFixedPt = (d1_h72 + d1_h22) * d1_speed * 100;
+
   const d1_sendenN = parseNum(document.getElementById('d1_senden').value);
-  const d1_sendenPt = d1_sendenN * 44.5;
+  const d1_sendenPt = d1_sendenN * (d1_speed / 6) * 100;
+
   const d1_flowerN = parseNum(document.getElementById('d1_flower').value);
   const d1_flowerPt = d1_flowerN * 10 * m_kokando;
   const d1_kanzashiN = parseNum(document.getElementById('d1_kanzashi').value);
@@ -634,7 +661,6 @@ function calc() {
   const d1_gyokuN = parseNum(document.getElementById('d1_gyoku').value);
   const d1_gyokuPt = d1_gyokuN * 100 * m_kokando;
   const d1_shipPt = 12000 * m_ship;
-  const d1_nightFixedPt = 25098;
   const d1_tsuboN = parseNum(document.getElementById('d1_tsubo').value);
   const d1_tsuboPt = d1_tsuboN * 20;
   const d1_total = d1_nightFixedPt + d1_sendenPt + d1_flowerPt + d1_kanzashiPt + d1_gyokuPt + d1_shipPt + d1_tsuboPt;
@@ -725,7 +751,6 @@ function calc() {
   const d6_total = d6_fixedPt + d6_fukuryoPt + d6_flowerPt + d6_kanzashiPt + d6_gyokuPt + d6_toramokuPt + d6_brickPt + d6_compassPt + d6_talismanPt + d6_tsuboPt;
 
   // --- 固定値表示の更新 ---
-  document.getElementById('d1_night_disp').innerText = `${Math.floor(d1_nightFixedPt).toLocaleString()} pt 固定`;
   document.getElementById('d1_ship_disp').innerText = `${Math.floor(d1_shipPt).toLocaleString()} pt 固定 (船団派遣倍率反映)`;
   document.getElementById('d3_fixed_disp').innerText = `${Math.floor(d3_fixedPt).toLocaleString()} pt 固定 (×${d3_itemCount}品目 / 領地資源倍率反映)`;
   document.getElementById('d5_fixed_kangaku_disp').innerText = `${Math.floor(d5_fixedKangakuPt).toLocaleString()} pt 固定 (計94時間 / 231.24万人分)`;
@@ -765,7 +790,7 @@ function calc() {
   document.getElementById('d4_land_cert-p').innerText = d4_landCertN ? `${d4_landCertN.toLocaleString()}枚 ➔ ${d4_landCertPt.toFixed(1)} pt` : '';
   document.getElementById('d4_patrol-p').innerText = d4_patrolN ? `${d4_patrolN.toLocaleString()}回 ➔ ${d4_patrolPt.toFixed(1)} pt` : '';
   document.getElementById('d4_conquest-p').innerText = d4_conquestN ? `${d4_conquestN.toLocaleString()}章 ➔ ${d4_conquestPt.toFixed(2)} pt` : '';
-  document.getElementById('d4_hyofu-p').innerText = d4_hyofuN ? `${d4_hyofuN.toLocaleString()}個 ➔ ${d4_hyofuPt.toLocaleString()} pt` : '';
+  document.getElementById('d4_hyofu-p').innerText = d4_hyofuN ? `${d4_hyofuN.toLocaleString()}個 ➔ ${d4_hyofuPt.toFixed(1)} pt` : '';
   document.getElementById('d4_tsubo-p').innerText = d4_tsuboN ? `${d4_tsuboN.toLocaleString()}個 ➔ ${d4_tsuboPt.toLocaleString()} pt` : '';
 
   document.getElementById('d5_kangaku-p').innerText = d5_kangakuN ? `${d5_kangakuN.toLocaleString()}枚 ➔ ${d5_kangakuPt.toFixed(1)} pt` : '';
