@@ -517,6 +517,17 @@ function calc() {
         const pEl = document.getElementById(`${item.id}-p`);
         if (pEl) pEl.innerText = sendenN ? `${sendenN.toLocaleString()}枚 ➔ ${itemPt.toFixed(1)} pt` : '';
       }
+      else if (item.type === 'patrol_item') {
+        const itemN = parseNum(document.getElementById(item.id).value);
+        // 回復薬1個 = 巡回1回分
+        // 1回あたり: 土地確定2.24万(=11.2pt) + 知己好感度(基礎20.8pt × 情義倍率)
+        const baseLandPt = 11.2;
+        const kokandoPtPerTimes = 20.8 * mult;
+        itemPt = itemN * (baseLandPt + kokandoPtPerTimes);
+        
+        const pEl = document.getElementById(`${item.id}-p`);
+        if (pEl) pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (巡回${itemN.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt` : '';
+      }
       else if (item.type === 'kangaku_card') {
         const peoplePerCard = parseNum(document.getElementById('d5_kangaku_card_people').value);
         const cardN = parseNum(document.getElementById(item.id).value);
