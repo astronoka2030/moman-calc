@@ -1,9 +1,15 @@
 {
   "day": 5,
   "title": "5日目「遠方との通商」",
+  "kangaku_market": {
+    "default_speed": "410",
+    "default_card_people": "410",
+    "default_h72": "72",
+    "default_h22": "22"
+  },
   "items": [
-    { "id": "d5_fixed_kangaku", "label": "諸子百家（72時間分 + 自然経過22時間分 固定 / 410人/分）", "note": "※410人は参考値です", "type": "fixed_kangaku", "base_pt": 23124 },
-    { "id": "d5_kangaku", "label": "諸子百家：勧学札 (1枚=410人=4.1pt)", "placeholder": "枚数 (例: 100)", "unit_pt": 4.1 },
+    { "id": "d5_kangaku_card_people", "label": "諸子百家：勧学札1枚あたりの募集人数", "placeholder": "例: 410", "default_value": "410", "type": "kangaku_card_people" },
+    { "id": "d5_kangaku", "label": "諸子百家：勧学札 (枚数)", "placeholder": "枚数 (例: 100)", "type": "kangaku_card" },
     { "id": "d5_詔書", "label": "シルクロード：通商緊急詔書 (1個=10pt / 詔書消費)", "placeholder": "個数 (例: 1.49万)", "unit_pt": 10, "tech_key": "b_shosho" },
     { "id": "d5_ship_fixed", "label": "海上シルクロード（鄭和の宝船 4隻固定 / 船団派遣）", "type": "fixed_ship", "base_pt": 12000, "tech_key": "b_ship" },
     { "id": "d5_tsubo", "label": "通宝使用数 (1個=20pt)", "placeholder": "例: 100", "unit_pt": 20 }
