@@ -197,7 +197,7 @@
   <div class="result-man" id="total-man">（約 0 万pt）</div>
 </div>
 
-  <script>
+<script>
 let configData = {};
 let techBonusData = [];
 let daysData = [];
@@ -235,7 +235,7 @@ async function loadAllJSON() {
 }
 
 function renderUI() {
-  // 技巧ボーナスの生成
+  // 技巧ボーナス
   const bonusContainer = document.getElementById('bonus-container');
   bonusContainer.innerHTML = '';
   techBonusData.forEach(item => {
@@ -255,7 +255,7 @@ function renderUI() {
     bonusContainer.appendChild(div);
   });
 
-  // 各日カードの生成
+  // 各日カード
   const daysContainer = document.getElementById('days-container');
   daysContainer.innerHTML = '';
 
@@ -269,6 +269,7 @@ function renderUI() {
       </div>
     `;
 
+    // 1日目：盛唐夜市
     if (day.night_market) {
       html += `
         <div class="card">
@@ -292,16 +293,43 @@ function renderUI() {
       `;
     }
 
+    // 5日目：諸子百家
+    if (day.kangaku_market) {
+      html += `
+        <div class="card">
+          <label>諸子百家：学習速度 (人/分)</label>
+          <input type="text" id="d5_kangaku_speed" class="save-input" placeholder="例: 410" value="${day.kangaku_market.default_speed}" oninput="calc()">
+        </div>
+        <div class="card">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="d5_use_72h" class="save-check" checked onchange="calc()" style="width: auto;">
+            <span>貯めた時間分を含める (最大72時間)</span>
+          </label>
+          <input type="text" id="d5_kangaku_72h" class="save-input" placeholder="時間 (例: 72)" value="${day.kangaku_market.default_h72}" oninput="calc()">
+        </div>
+        <div class="card">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="d5_use_22h" class="save-check" checked onchange="calc()" style="width: auto;">
+            <span>自然経過時間分を含める (最大22時間)</span>
+          </label>
+          <input type="text" id="d5_kangaku_22h" class="save-input" placeholder="時間 (例: 22)" value="${day.kangaku_market.default_h22}" oninput="calc()">
+        </div>
+      `;
+    }
+
     day.items.forEach(item => {
       html += `<div class="card">`;
       html += `<label>${item.label}</label>`;
       
-      if (item.type === 'fixed_ship' || item.type === 'fixed_kangaku' || item.type === 'fixed_simple') {
+      if (item.type === 'fixed_ship' || item.type === 'fixed_simple') {
         html += `<div class="fixed-val" id="${item.id}_disp">0 pt 固定</div>`;
       } else if (item.type === 'd3_resource_fixed') {
         html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder}" value="${item.default_value}" oninput="calc()">`;
         if (item.note) html += `<div class="note-text">${item.note}</div>`;
         html += `<div class="fixed-val" id="d3_fixed_disp" style="margin-top:4px;">0 pt 固定</div>`;
+      } else if (item.type === 'sand_ratio' || item.type === 'kangaku_card_people') {
+        html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder}" value="${item.default_value}" oninput="calc()">`;
+        if (item.note) html += `<div class="note-text">${item.note}</div>`;
       } else {
         html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" oninput="calc()">`;
         if (item.note) html += `<div class="note-text">${item.note}</div>`;
@@ -372,6 +400,11 @@ function clearAll() {
       else if (input.id === 'd1_night_speed') input.value = '2.67';
       else if (input.id === 'd1_night_72h') input.value = '72';
       else if (input.id === 'd1_night_22h') input.value = '22';
+      else if (input.id === 'd2_sand_ratio') input.value = '57';
+      else if (input.id === 'd5_kangaku_speed') input.value = '410';
+      else if (input.id === 'd5_kangaku_card_people') input.value = '410';
+      else if (input.id === 'd5_kangaku_72h') input.value = '72';
+      else if (input.id === 'd5_kangaku_22h') input.value = '22';
       else input.value = '';
       localStorage.removeItem('moman_' + input.id);
     });
@@ -386,6 +419,7 @@ function calc() {
   daysData.forEach(day => {
     let dayTotal = 0;
 
+    // 1日目：盛唐夜市経過計算
     if (day.night_market) {
       const d1_speed = parseNum(document.getElementById('d1_night_speed').value);
       const d1_use72 = document.getElementById('d1_use_72h').checked;
@@ -395,6 +429,19 @@ function calc() {
       
       const nightFixedPt = (d1_h72 + d1_h22) * d1_speed * 100;
       dayTotal += nightFixedPt;
+    }
+
+    // 5日目：諸子百家経過計算
+    if (day.kangaku_market) {
+      const d5_speed = parseNum(document.getElementById('d5_kangaku_speed').value);
+      const d5_use72 = document.getElementById('d5_use_72h').checked;
+      const d5_h72 = d5_use72 ? parseNum(document.getElementById('d5_kangaku_72h').value) : 0;
+      const d5_use22 = document.getElementById('d5_use_22h').checked;
+      const d5_h22 = d5_use22 ? parseNum(document.getElementById('d5_kangaku_22h').value) : 0;
+      
+      // 人/分 × 60分 × 時間 × 0.01pt/人
+      const kangakuFixedPt = d5_speed * 60 * (d5_h72 + d5_h22) * 0.01;
+      dayTotal += kangakuFixedPt;
     }
 
     day.items.forEach(item => {
@@ -407,7 +454,14 @@ function calc() {
         itemPt = sendenN * (d1_speed / 6) * 100;
         const pEl = document.getElementById(`${item.id}-p`);
         if (pEl) pEl.innerText = sendenN ? `${sendenN.toLocaleString()}枚 ➔ ${itemPt.toFixed(1)} pt` : '';
-      } 
+      }
+      else if (item.type === 'kangaku_card') {
+        const peoplePerCard = parseNum(document.getElementById('d5_kangaku_card_people').value);
+        const cardN = parseNum(document.getElementById(item.id).value);
+        itemPt = cardN * peoplePerCard * 0.01;
+        const pEl = document.getElementById(`${item.id}-p`);
+        if (pEl) pEl.innerText = cardN ? `${cardN.toLocaleString()}枚 ➔ ${itemPt.toFixed(1)} pt` : '';
+      }
       else if (item.type === 'trib') {
         const num = parseNum(document.getElementById(item.id).value);
         const count = Math.floor(num / 100);
@@ -416,12 +470,16 @@ function calc() {
         if (pEl) pEl.innerText = num ? `祈祷${count.toLocaleString()}回分 ➔ ${itemPt.toFixed(1)} pt` : '';
       }
       else if (item.type === 'sand') {
+        const ratio = parseNum(document.getElementById('d2_sand_ratio').value);
         const num = parseNum(document.getElementById(item.id).value);
-        const tribTotal = num * 57;
+        const tribTotal = num * ratio;
         const count = Math.floor(tribTotal / 100);
         itemPt = count * 25;
         const pEl = document.getElementById(`${item.id}-p`);
         if (pEl) pEl.innerText = num ? `貢物${tribTotal.toLocaleString()}個(祈祷${count.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt` : '';
+      }
+      else if (item.type === 'sand_ratio' || item.type === 'kangaku_card_people') {
+        itemPt = 0; // 設定用の入力項目のためポイントには直接加算しない
       }
       else if (item.type === 'nikuman') {
         const num = parseNum(document.getElementById(item.id).value);
@@ -433,11 +491,6 @@ function calc() {
         itemPt = item.base_pt * mult;
         const el = document.getElementById(`${item.id}_disp`);
         if (el) el.innerText = `${Math.floor(itemPt).toLocaleString()} pt 固定 (船団派遣倍率反映)`;
-      }
-      else if (item.type === 'fixed_kangaku') {
-        itemPt = item.base_pt;
-        const el = document.getElementById(`${item.id}_disp`);
-        if (el) el.innerText = `${Math.floor(itemPt).toLocaleString()} pt 固定 (計94時間 / 231.24万人分)`;
       }
       else if (item.type === 'fixed_simple') {
         itemPt = item.base_pt;
