@@ -525,7 +525,7 @@ function calc() {
         itemPt = itemN * kokandoPtPerTimes;
         
         const pEl = document.getElementById(`${item.id}-p`);
-        if (pEl) pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (巡回${itemN.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt` : '';
+        if (pEl) pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (巡回${itemN.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt (期待値)` : '';
       }
       else if (item.type === 'd4_patrol_item') {
         const itemN = parseNum(document.getElementById(item.id).value);
@@ -536,7 +536,7 @@ function calc() {
         itemPt = itemN * (landPtPerTimes + dropItemPt);
 
         const pEl = document.getElementById(`${item.id}-p`);
-        if (pEl) pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (巡回${itemN.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt` : '';
+        if (pEl) pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (巡回${itemN.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt (期待値)` : '';
       }
       else if (item.type === 'kangaku_card') {
         const peoplePerCard = parseNum(document.getElementById('d5_kangaku_card_people').value);
