@@ -9,7 +9,7 @@
   },
   "items": [
     { "id": "d1_senden", "label": "盛唐夜市：宣伝札 (1枚=10分間)", "placeholder": "枚数 (例: 100)", "type": "senden" },
-    { "id": "d1_patrol_item", "label": "巡回：回復薬 (1個=巡回1回分 / 知己・資源重視)", "placeholder": "個数 (例: 100)", "note": "※1日目での使用が最も効率が良い", "type": "patrol_item", "tech_key": "b_kokando" },
+    { "id": "d1_patrol_item", "label": "巡回：回復薬 (1個=巡回1回分 / 知己・資源重視)", "placeholder": "個数 (例: 100)", "note": "※知己の好感度、好感度アイテム、加速札、資源札を獲得できる。4日目に土地目的で使うより1日目での使用が望ましい。", "type": "patrol_item", "tech_key": "b_kokando" },
     { "id": "d1_flower", "label": "知己：お花 (好感度+1 / 1個=10pt)", "placeholder": "例: 100 または 1.2万", "unit_pt": 10, "tech_key": "b_kokando" },
     { "id": "d1_kanzashi", "label": "知己：簪 (好感度+3 / 1個=30pt)", "placeholder": "例: 50", "unit_pt": 30, "tech_key": "b_kokando" },
     { "id": "d1_gyoku", "label": "知己：玉 (好感度+10 / 1個=100pt)", "placeholder": "例: 1.49万", "unit_pt": 100, "tech_key": "b_kokando" },
