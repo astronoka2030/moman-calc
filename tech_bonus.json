@@ -1,0 +1,11 @@
+[
+  { "id": "b_resource", "name": "1. 領地の資源生産 (善政の巻)" },
+  { "id": "b_toramoku", "name": "2. 虎杢の消費 (神行の巻)" },
+  { "id": "b_ship", "name": "3. 船団派遣 (蓄財の巻)" },
+  { "id": "b_land", "name": "4. 土地獲得 (雄図の巻)" },
+  { "id": "b_kokando", "name": "5. 知己の好感度上昇 (情義の巻)" },
+  { "id": "b_shosho", "name": "6. 通商緊急詔書の消費 (文心の巻)" },
+  { "id": "b_advisor", "name": "7. 顧問選抜 (義集い巻)" },
+  { "id": "b_stamina", "name": "8. 遠征スタミナ消費 (威徳の巻)" },
+  { "id": "b_research", "name": "9. 研究 (匠心の巻)" }
+]
