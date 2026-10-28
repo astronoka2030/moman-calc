@@ -464,7 +464,7 @@ function clearAll() {
       else if (input.id === 'd1_night_72h') input.value = '72';
       else if (input.id === 'd1_night_22h') input.value = '22';
       else if (input.id === 'd2_sand_ratio') input.value = '57';
-      else if (input.id === 'd4_patrol_land_val') input.value = '2.24';
+      else if (input.id === 'd4_patrol_land_val') input.value = '2.24万';
       else if (input.id === 'd5_kangaku_speed') input.value = '410';
       else if (input.id === 'd5_kangaku_card_people') input.value = '410';
       else if (input.id === 'd5_kangaku_72h') input.value = '72';
@@ -529,9 +529,10 @@ function calc() {
       }
       else if (item.type === 'd4_patrol_item') {
         const itemN = parseNum(document.getElementById(item.id).value);
-        const landVal = parseNum(document.getElementById('d4_patrol_land_val').value);
-        // 4日目: (土地万数値 × 5pt × 雄図倍率) + ドロップ好感度アイテム基礎(4.467pt ※生好感度除外)
-        const landPtPerTimes = landVal * 5 * mult;
+        const rawLandVal = parseNum(document.getElementById('d4_patrol_land_val').value);
+        // "2.24万"も"22400"もparseNumで22400になるため、万単位(2.24)に変換して計算
+        const landValInMan = rawLandVal / 10000;
+        const landPtPerTimes = landValInMan * 5 * mult;
         const dropItemPt = 4.467;
         itemPt = itemN * (landPtPerTimes + dropItemPt);
 
