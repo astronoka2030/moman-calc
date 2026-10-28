@@ -3,8 +3,8 @@
   "title": "2日目「南征北伐」",
   "items": [
     { "id": "d2_trib", "label": "エジプト：貢物数 (100個で祈祷1回=25pt)", "placeholder": "例: 500", "type": "trib" },
-    { "id": "d2_sand_ratio", "label": "時の砂1個あたりの貢物数", "placeholder": "例: 57", "default_value": "57", "type": "sand_ratio" },
-    { "id": "d2_sand", "label": "エジプト：時の砂", "placeholder": "個数 (例: 200)", "type": "sand" },
+    { "id": "d2_sand_ratio", "label": "砂時計1個あたりの貢物数", "placeholder": "例: 57", "default_value": "57", "type": "sand_ratio", "help_img": "Screenshot_20261028_200848.jpg" },
+    { "id": "d2_sand", "label": "エジプト：砂時計", "placeholder": "個数 (例: 200)", "type": "sand" },
     { "id": "d2_toramoku", "label": "虎杢 (1個=10pt / 虎杢消費)", "placeholder": "例: 1000", "note": "※龍甲片の10倍以下の数値にしてください", "unit_pt": 10, "tech_key": "b_toramoku" },
     { "id": "d2_stamina", "label": "遠征スタミナ (1消費=20pt / 遠征スタミナ)", "placeholder": "消費スタミナ (例: 50)", "unit_pt": 20, "tech_key": "b_stamina" },
     { "id": "d2_nikuman", "label": "肉まん (1個=スタミナ3回復=60pt / 遠征スタミナ)", "placeholder": "例: 20", "type": "nikuman", "tech_key": "b_stamina" },
