@@ -5,7 +5,8 @@
     "default_speed": "410",
     "default_card_people": "410",
     "default_h72": "72",
-    "default_h22": "22"
+    "default_h22": "22",
+    "help_img": "Screenshot_20261028_200502.jpg"
   },
   "items": [
     { "id": "d5_kangaku_card_people", "label": "諸子百家：勧学札1枚あたりの募集人数", "placeholder": "例: 410", "default_value": "410", "type": "kangaku_card_people" },
