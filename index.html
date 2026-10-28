@@ -90,12 +90,26 @@
     margin-top: 6px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   }
+  .label-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
   label {
     font-weight: bold;
-    display: block;
-    margin-bottom: 4px;
     font-size: 0.85rem;
     color: #2c3e50;
+  }
+  .help-btn {
+    background: #f39c12;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 0.72rem;
+    font-weight: bold;
+    cursor: pointer;
   }
   input[type="text"] {
     width: 100%;
@@ -172,6 +186,25 @@
     color: #d35400;
     font-weight: bold;
   }
+
+  /* ポップアップ画像（モーダル）CSS */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  .modal-overlay img {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  }
 </style>
 </head>
 <body>
@@ -197,6 +230,10 @@
   <div class="result-man" id="total-man">（約 0 万pt）</div>
 </div>
 
+<!-- 画像ポップアップ用モーダル -->
+<div id="image-modal" class="modal-overlay" onclick="closeModal()">
+  <img id="modal-img" src="" alt="確認用画像">
+</div>
 <script>
 let configData = {};
 let techBonusData = [];
@@ -232,6 +269,17 @@ async function loadAllJSON() {
   } catch (err) {
     console.error('JSON読み込みエラー:', err);
   }
+}
+
+function showModal(imgSrc) {
+  const modal = document.getElementById('image-modal');
+  const img = document.getElementById('modal-img');
+  img.src = imgSrc;
+  modal.style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('image-modal').style.display = 'none';
 }
 
 function renderUI() {
@@ -271,9 +319,13 @@ function renderUI() {
 
     // 1日目：盛唐夜市
     if (day.night_market) {
+      const helpBtn = day.night_market.help_img ? `<button class="help-btn" onclick="showModal('${day.night_market.help_img}')">💡 場所を確認</button>` : '';
       html += `
         <div class="card">
-          <label>盛唐夜市：来客速度 (万人/時間)</label>
+          <div class="label-container">
+            <label>盛唐夜市：来客速度 (万人/時間)</label>
+            ${helpBtn}
+          </div>
           <input type="text" id="d1_night_speed" class="save-input" placeholder="例: 2.67" value="${day.night_market.default_speed}" oninput="calc()">
         </div>
         <div class="card">
@@ -295,9 +347,13 @@ function renderUI() {
 
     // 5日目：諸子百家
     if (day.kangaku_market) {
+      const helpBtn = day.kangaku_market.help_img ? `<button class="help-btn" onclick="showModal('${day.kangaku_market.help_img}')">💡 場所を確認</button>` : '';
       html += `
         <div class="card">
-          <label>諸子百家：学習速度 (人/分)</label>
+          <div class="label-container">
+            <label>諸子百家：学習速度 (人/分)</label>
+            ${helpBtn}
+          </div>
           <input type="text" id="d5_kangaku_speed" class="save-input" placeholder="例: 410" value="${day.kangaku_market.default_speed}" oninput="calc()">
         </div>
         <div class="card">
@@ -318,8 +374,15 @@ function renderUI() {
     }
 
     day.items.forEach(item => {
+      const helpBtn = item.help_img ? `<button class="help-btn" onclick="showModal('${item.help_img}')">💡 場所を確認</button>` : '';
+      
       html += `<div class="card">`;
-      html += `<label>${item.label}</label>`;
+      html += `
+        <div class="label-container">
+          <label>${item.label}</label>
+          ${helpBtn}
+        </div>
+      `;
       
       if (item.type === 'fixed_ship' || item.type === 'fixed_simple') {
         html += `<div class="fixed-val" id="${item.id}_disp">0 pt 固定</div>`;
@@ -439,7 +502,6 @@ function calc() {
       const d5_use22 = document.getElementById('d5_use_22h').checked;
       const d5_h22 = d5_use22 ? parseNum(document.getElementById('d5_kangaku_22h').value) : 0;
       
-      // 人/分 × 60分 × 時間 × 0.01pt/人
       const kangakuFixedPt = d5_speed * 60 * (d5_h72 + d5_h22) * 0.01;
       dayTotal += kangakuFixedPt;
     }
@@ -479,7 +541,7 @@ function calc() {
         if (pEl) pEl.innerText = num ? `貢物${tribTotal.toLocaleString()}個(祈祷${count.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt` : '';
       }
       else if (item.type === 'sand_ratio' || item.type === 'kangaku_card_people') {
-        itemPt = 0; // 設定用の入力項目のためポイントには直接加算しない
+        itemPt = 0;
       }
       else if (item.type === 'nikuman') {
         const num = parseNum(document.getElementById(item.id).value);
