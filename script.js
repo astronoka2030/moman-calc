@@ -317,14 +317,10 @@ function calc() {
           const speedVal = parseNum(document.getElementById('d6_fukuryo_speed')?.value);
           const hoursVal = parseNum(document.getElementById('d6_fukuryo_hours')?.value);
 
-          // 1. 片道時間(分) = 175000 / (速度 + 25) + 68
           const oneWayMin = (175000 / (speedVal + 25)) + 68;
-          // 2. 総チャージ時間(分) = 時間 × 60
           const totalChargeMin = hoursVal * 60;
-          // 3. 移動回数・累計距離 = (総チャージ分 ÷ 片道分) × 2,800
           const trips = totalChargeMin / oneWayMin;
           const totalDist = trips * 2800;
-          // 4. 獲得ポイント = INT(累計距離 / 500) × 100
           itemPt = Math.floor(totalDist / 500) * 100;
 
           const pEl = document.getElementById(`${item.id}-p`);
@@ -336,14 +332,10 @@ function calc() {
           const speedVal = parseNum(document.getElementById('d6_fukuryo_speed')?.value);
           const itemN = parseNum(document.getElementById(item.id)?.value);
 
-          // 1. 片道時間(分) = 175000 / (速度 + 25) + 68
           const oneWayMin = (175000 / (speedVal + 25)) + 68;
-          // 2. 総チャージ時間(分) = 個数 × 30分
           const totalChargeMin = itemN * 30;
-          // 3. 移動回数・累計距離 = (総チャージ分 ÷ 片道分) × 2,800
           const trips = totalChargeMin / oneWayMin;
           const totalDist = trips * 2800;
-          // 4. 獲得ポイント = INT(累計距離 / 500) × 100
           itemPt = Math.floor(totalDist / 500) * 100;
 
           const pEl = document.getElementById(`${item.id}-p`);
@@ -352,6 +344,7 @@ function calc() {
           }
         }
         else if (item.type === 'patrol_item') {
+          // 巡回回復薬（1日目および6日目の共通期待値計算）
           const itemN = parseNum(document.getElementById(item.id)?.value);
           const kokandoPtPerTimes = 20.8 * mult;
           itemPt = itemN * kokandoPtPerTimes;
@@ -400,7 +393,7 @@ function calc() {
           const num = parseNum(document.getElementById(item.id)?.value);
           itemPt = num * 3 * 20 * mult;
           const pEl = document.getElementById(`${item.id}-p`);
-          if (pEl) pEl.innerText = num ? `スタミナ${(num*3).toLocaleString()}回復 ➔ ${itemPt.toFixed(1)} pt` : '';
+          if (pEl) pEl.innerText = num ? `スタミナ${(num*3).toLocaleString()}回復 ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
         }
         else if (item.type === 'fixed_ship') {
           itemPt = item.base_pt * mult;
