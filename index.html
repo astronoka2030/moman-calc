@@ -49,7 +49,7 @@
   .bonus-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 8px;
+    gap: 10px;
   }
   .bonus-item {
     display: flex;
@@ -59,18 +59,37 @@
     color: #2c3e50;
     font-weight: bold;
   }
+  .bonus-label-wrap {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+  .bonus-main-name {
+    font-size: 0.88rem;
+    color: #1a252f;
+    font-weight: bold;
+  }
+  .bonus-sub-desc {
+    font-size: 0.72rem;
+    color: #666;
+    font-weight: normal;
+  }
   .bonus-item select {
     padding: 4px 6px;
     font-size: 13px;
     border-radius: 4px;
     border: 1px solid #aab7b8;
     background: #fff;
-    max-width: 180px;
+    min-width: 80px;
+  }
+  .bonus-right-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
   .bonus-val-disp {
     color: #e67e22;
     font-size: 0.82rem;
-    margin-left: 6px;
     min-width: 45px;
     text-align: right;
   }
@@ -264,6 +283,23 @@ function getTechBonusPercent(level) {
   return 200;
 }
 
+// "領地の資源生産 (善政の巻)" などを "善政の巻" と "（領地の資源生産）" に分離する関数
+function parseBonusName(rawName, index) {
+  const match = rawName.match(/(.+)\s*\((.+)\)/);
+  if (match) {
+    const desc = match[1].trim();
+    const maki = match[2].trim();
+    return {
+      title: `${index + 1}. ${maki}`,
+      sub: `（${desc}）`
+    };
+  }
+  return {
+    title: `${index + 1}. ${rawName}`,
+    sub: ""
+  };
+}
+
 async function loadAllJSON() {
   try {
     const [configRes, techRes, d1Res, d2Res, d3Res, d4Res, d5Res, d6Res] = await Promise.all([
@@ -308,23 +344,27 @@ function closeModal() {
 }
 
 function renderUI() {
-  // 技巧ボーナス (デフォルト Lv.15)
+  // 技巧ボーナス UI 構築
   const bonusContainer = document.getElementById('bonus-container');
   bonusContainer.innerHTML = '';
-  techBonusData.forEach(item => {
+  techBonusData.forEach((item, idx) => {
     const div = document.createElement('div');
     div.className = 'bonus-item';
     
-    let optionsHtml = `<option value="0">未開放 (+0%)</option>`;
+    const parsed = parseBonusName(item.name, idx);
+
+    let optionsHtml = `<option value="0">未開放</option>`;
     for (let lv = 1; lv <= 60; lv++) {
-      const pct = getTechBonusPercent(lv);
       const selected = (lv === 15) ? 'selected' : '';
-      optionsHtml += `<option value="${lv}" ${selected}>Lv.${lv} (+${pct}%)</option>`;
+      optionsHtml += `<option value="${lv}" ${selected}>Lv.${lv}</option>`;
     }
 
     div.innerHTML = `
-      <span>${item.name}:</span>
-      <div>
+      <div class="bonus-label-wrap">
+        <span class="bonus-main-name">${parsed.title}</span>
+        <span class="bonus-sub-desc">${parsed.sub}</span>
+      </div>
+      <div class="bonus-right-controls">
         <select id="${item.id}" class="bonus-select" onchange="calc()">${optionsHtml}</select>
         <span class="bonus-val-disp" id="${item.id}_pct_disp">+75%</span>
       </div>
@@ -426,7 +466,7 @@ function renderUI() {
       html += `</div>`;
     });
 
-    html += `</div>`; // .day-card を閉じる
+    html += `</div>`;
     dayWrap.innerHTML = html;
     daysContainer.appendChild(dayWrap);
   });
