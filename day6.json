@@ -2,13 +2,14 @@
   "day": 6,
   "title": "6日目「兵馬鍛錬」",
   "items": [
-    {
+        {
       "id": "d6_fukuryo_speed",
       "label": "富貴栄華：移動速度",
       "type": "d6_fukuryo_speed",
       "default_value": "300",
       "placeholder": "例: 300",
-      "help_img": "Screenshot_20261029_091805.jpg"
+      "help_img": "Screenshot_20261029_091805.jpg",
+      "note": "※成都⇔揚州（片道2,800里）の往復データ、および移動距離500里＝100ptの基準に基づいて算出します"
     },
     {
       "id": "d6_fukuryo_hours",
