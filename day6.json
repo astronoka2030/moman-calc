@@ -24,6 +24,14 @@
       "placeholder": "個数 (例: 370)"
     },
     {
+      "id": "d6_patrol",
+      "label": "巡回：回復薬 (1個=巡回1回分 / 知己・資源重視)",
+      "type": "patrol_item",
+      "tech_key": "bonus_jinki",
+      "placeholder": "個数 (例: 100)",
+      "note": "※知己の好感度、好感度アイテム、加速札、資源札を獲得できる。"
+    },
+    {
       "id": "d6_flower",
       "label": "知己：お花 (好感度+1 / 1個=10pt)",
       "unit_pt": 10,
@@ -68,9 +76,9 @@
     },
     {
       "id": "d6_charge_pt",
-      "label": "チャージポイント (1pt=20pt)",
+      "label": "通宝使用数 (1個=20pt)",
       "unit_pt": 20,
-      "placeholder": "ポイント数"
+      "placeholder": "例: 100"
     }
   ]
 }
