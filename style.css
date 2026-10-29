@@ -230,3 +230,10 @@ input[type="text"]:focus {
 .day-wrapper.collapsed .day-card {
   display: none; /* 中身を非表示 */
 }
+
+/* コンテナまたはbodyの下部にフッターと被らないための余白（マージン）を追加 */
+#days-container,
+.container {
+  padding-bottom: 140px; /* 合計表示枠の高さ＋余白分を確保 */
+}
+
