@@ -2,7 +2,7 @@
   "day": 6,
   "title": "6日目「兵馬鍛錬」",
   "items": [
-        {
+    {
       "id": "d6_fukuryo_speed",
       "label": "富貴栄華：移動速度",
       "type": "d6_fukuryo_speed",
@@ -26,28 +26,31 @@
     },
     {
       "id": "d6_patrol",
-      "label": "巡回：回復薬 (1個=巡回1回分 / 知己重視)",
+      "label": "巡回：回復薬 (1個=巡回1回分 / 知己・資源重視)",
       "type": "patrol_item",
       "tech_key": "bonus_jinki",
       "placeholder": "個数 (例: 100)",
-      "note": "※知己の好感度、好感度アイテムの期待値。"
+      "note": "※知己の好感度、好感度アイテムを含めた期待値。"
     },
     {
       "id": "d6_flower",
       "label": "知己：お花 (好感度+1 / 1個=10pt)",
       "unit_pt": 10,
+      "tech_key": "bonus_jougi",
       "placeholder": "個数"
     },
     {
       "id": "d6_kanzashi",
       "label": "知己：簪 (好感度+3 / 1個=30pt)",
       "unit_pt": 30,
+      "tech_key": "bonus_jougi",
       "placeholder": "個数"
     },
     {
       "id": "d6_gyoku",
       "label": "知己：玉 (好感度+10 / 1個=100pt)",
       "unit_pt": 100,
+      "tech_key": "bonus_jougi",
       "placeholder": "個数"
     },
     {
@@ -77,9 +80,9 @@
     },
     {
       "id": "d6_charge_pt",
-      "label": "通宝使用数 (1個=20pt)",
+      "label": "通宝使用数 (1通宝=20pt)",
       "unit_pt": 20,
-      "placeholder": "例: 100"
+      "placeholder": "個数 (例: 100)"
     }
   ]
 }
