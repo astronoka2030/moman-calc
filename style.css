@@ -49,14 +49,23 @@ h2 {
   border: 1px solid #aab7b8;
   background: #fff;
 }
+
+/* 一体化のためのカードラッパー */
+.day-wrapper {
+  margin-top: 18px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+/* 見出し部分（カードの上部と密着） */
 .day-title {
   background: #2c3e50;
   color: #fff;
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 10px 12px;
   font-size: 0.95rem;
   font-weight: bold;
-  margin-top: 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -67,14 +76,10 @@ h2 {
   font-weight: bold;
 }
 
-/* 1日1枠のスタイル */
+/* 入力エリア部分（見出しと結合） */
 .day-card {
   background: #fff;
   padding: 12px;
-  border-radius: 8px;
-  margin-top: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-  border: 1px solid #e1e8ed;
 }
 .item-row {
   margin-bottom: 10px;
