@@ -83,13 +83,35 @@
     color: #f39c12;
     font-weight: bold;
   }
-  .card {
+
+  /* グループ化カードのスタイル */
+  .group-card {
     background: #fff;
-    padding: 10px 12px;
+    padding: 12px;
     border-radius: 8px;
-    margin-top: 6px;
+    margin-top: 8px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #e1e8ed;
   }
+  .group-header {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #2980b9;
+    border-bottom: 2px solid #eef2f5;
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+  }
+  .item-row {
+    margin-bottom: 10px;
+  }
+  .item-row:last-child {
+    margin-bottom: 0;
+  }
+  .item-row + .item-row {
+    border-top: 1px dashed #edf2f7;
+    padding-top: 8px;
+  }
+
   .label-container {
     display: flex;
     justify-content: space-between;
@@ -303,7 +325,7 @@ function renderUI() {
     bonusContainer.appendChild(div);
   });
 
-  // 各日カード
+  // 各日エリアのグループ化レンダリング
   const daysContainer = document.getElementById('days-container');
   daysContainer.innerHTML = '';
 
@@ -317,67 +339,110 @@ function renderUI() {
       </div>
     `;
 
-    // 1日目：盛唐夜市
+    // 1日目：盛唐夜市グループ
     if (day.night_market) {
       const helpBtn = day.night_market.help_img ? `<button class="help-btn" onclick="showModal('${day.night_market.help_img}')">💡 場所を確認</button>` : '';
       html += `
-        <div class="card">
-          <div class="label-container">
-            <label>盛唐夜市：来客数 (万人/時間)</label>
-            ${helpBtn}
+        <div class="group-card">
+          <div class="group-header">盛唐夜市</div>
+          <div class="item-row">
+            <div class="label-container">
+              <label>盛唐夜市：来客数 (万人/時間)</label>
+              ${helpBtn}
+            </div>
+            <input type="text" id="d1_night_speed" class="save-input" placeholder="例: 2.67" value="${day.night_market.default_speed}" oninput="calc()">
           </div>
-          <input type="text" id="d1_night_speed" class="save-input" placeholder="例: 2.67" value="${day.night_market.default_speed}" oninput="calc()">
-        </div>
-        <div class="card">
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-            <input type="checkbox" id="d1_use_72h" class="save-check" checked onchange="calc()" style="width: auto;">
-            <span>盛唐夜市：貯めた時間分を含める (最大72時間)</span>
-          </label>
-          <input type="text" id="d1_night_72h" class="save-input" placeholder="時間 (例: 72)" value="${day.night_market.default_h72}" oninput="calc()">
-        </div>
-        <div class="card">
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-            <input type="checkbox" id="d1_use_22h" class="save-check" checked onchange="calc()" style="width: auto;">
-            <span>盛唐夜市：自然経過時間分を含める (最大22時間)</span>
-          </label>
-          <input type="text" id="d1_night_22h" class="save-input" placeholder="時間 (例: 22)" value="${day.night_market.default_h22}" oninput="calc()">
+          <div class="item-row">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="d1_use_72h" class="save-check" checked onchange="calc()" style="width: auto;">
+              <span>貯めた時間分を含める (最大72時間)</span>
+            </label>
+            <input type="text" id="d1_night_72h" class="save-input" placeholder="時間 (例: 72)" value="${day.night_market.default_h72}" oninput="calc()">
+          </div>
+          <div class="item-row">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="d1_use_22h" class="save-check" checked onchange="calc()" style="width: auto;">
+              <span>自然経過時間分を含める (最大22時間)</span>
+            </label>
+            <input type="text" id="d1_night_22h" class="save-input" placeholder="時間 (例: 22)" value="${day.night_market.default_h22}" oninput="calc()">
+          </div>
         </div>
       `;
     }
 
-    // 5日目：諸子百家
+    // 5日目：諸子百家グループ
     if (day.kangaku_market) {
       const helpBtn = day.kangaku_market.help_img ? `<button class="help-btn" onclick="showModal('${day.kangaku_market.help_img}')">💡 場所を確認</button>` : '';
       html += `
-        <div class="card">
-          <div class="label-container">
-            <label>諸子百家：学習人数 (人/分)</label>
-            ${helpBtn}
+        <div class="group-card">
+          <div class="group-header">諸子百家</div>
+          <div class="item-row">
+            <div class="label-container">
+              <label>諸子百家：学習人数 (人/分)</label>
+              ${helpBtn}
+            </div>
+            <input type="text" id="d5_kangaku_speed" class="save-input" placeholder="例: 410" value="${day.kangaku_market.default_speed}" oninput="calc()">
           </div>
-          <input type="text" id="d5_kangaku_speed" class="save-input" placeholder="例: 410" value="${day.kangaku_market.default_speed}" oninput="calc()">
-        </div>
-        <div class="card">
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-            <input type="checkbox" id="d5_use_72h" class="save-check" checked onchange="calc()" style="width: auto;">
-            <span>諸子百家：貯めた時間分を含める (最大72時間)</span>
-          </label>
-          <input type="text" id="d5_kangaku_72h" class="save-input" placeholder="時間 (例: 72)" value="${day.kangaku_market.default_h72}" oninput="calc()">
-        </div>
-        <div class="card">
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-            <input type="checkbox" id="d5_use_22h" class="save-check" checked onchange="calc()" style="width: auto;">
-            <span>諸子百家：自然経過時間分を含める (最大22時間)</span>
-          </label>
-          <input type="text" id="d5_kangaku_22h" class="save-input" placeholder="時間 (例: 22)" value="${day.kangaku_market.default_h22}" oninput="calc()">
+          <div class="item-row">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="d5_use_72h" class="save-check" checked onchange="calc()" style="width: auto;">
+              <span>貯めた時間分を含める (最大72時間)</span>
+            </label>
+            <input type="text" id="d5_kangaku_72h" class="save-input" placeholder="時間 (例: 72)" value="${day.kangaku_market.default_h72}" oninput="calc()">
+          </div>
+          <div class="item-row">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="d5_use_22h" class="save-check" checked onchange="calc()" style="width: auto;">
+              <span>自然経過時間分を含める (最大22時間)</span>
+            </label>
+            <input type="text" id="d5_kangaku_22h" class="save-input" placeholder="時間 (例: 22)" value="${day.kangaku_market.default_h22}" oninput="calc()">
+          </div>
         </div>
       `;
     }
 
-    day.items.forEach(item => {
+    // アイテム群をプレフィックスや機能に基づいて自動グループ化
+    let currentGroup = "";
+    let groupHtml = "";
+
+    day.items.forEach((item, idx) => {
+      let groupName = "基本項目";
+      
+      if (item.label.includes("知己：") || item.label.includes("巡回：") || item.type === "patrol_item") {
+        groupName = "知己・巡回関連";
+      } else if (item.label.includes("エジプト：")) {
+        groupName = "エジプト（南征北伐）";
+      } else if (item.label.includes("富貴栄華：") || item.type === "d6_fukuryo_item" || item.type === "fixed_simple") {
+        groupName = "富貴栄華";
+      } else if (item.label.includes("海上シルクロード") || item.label.includes("シルクロード：")) {
+        groupName = "シルクロード・貿易";
+      } else if (item.label.includes("諸子百家：") || item.type === "kangaku_card_people") {
+        groupName = "諸子百家カード";
+      } else if (item.label.includes("盛唐夜市：")) {
+        groupName = "盛唐夜市カード";
+      } else if (item.label.includes("資源") || item.label.includes("百工") || item.label.includes("天工") || item.label.includes("研究")) {
+        groupName = "生産・研究・資源";
+      }
+
+      // グループ切り替え処理
+      if (groupName !== currentGroup) {
+        if (currentGroup !== "") {
+          groupHtml += `</div>`; // 前のカードを閉じる
+        }
+        currentGroup = groupName;
+        groupHtml += `
+          <div class="group-card">
+            <div class="group-header">${groupName}</div>
+        `;
+      } else {
+        // 同一グループ内なら区切り線を挿入
+        groupHtml += `<div class="item-row-divider"></div>`;
+      }
+
       const helpBtn = item.help_img ? `<button class="help-btn" onclick="showModal('${item.help_img}')">💡 場所を確認</button>` : '';
       
-      html += `<div class="card">`;
-      html += `
+      groupHtml += `<div class="item-row">`;
+      groupHtml += `
         <div class="label-container">
           <label>${item.label}</label>
           ${helpBtn}
@@ -385,23 +450,28 @@ function renderUI() {
       `;
       
       if (item.type === 'fixed_ship' || item.type === 'fixed_simple') {
-        html += `<div class="fixed-val" id="${item.id}_disp">0 pt 固定</div>`;
+        groupHtml += `<div class="fixed-val" id="${item.id}_disp">0 pt 固定</div>`;
       } else if (item.type === 'd3_resource_fixed') {
-        html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder}" value="${item.default_value}" oninput="calc()">`;
-        if (item.note) html += `<div class="note-text">${item.note}</div>`;
-        html += `<div class="fixed-val" id="d3_fixed_disp" style="margin-top:4px;">0 pt 固定</div>`;
+        groupHtml += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder}" value="${item.default_value}" oninput="calc()">`;
+        if (item.note) groupHtml += `<div class="note-text">${item.note}</div>`;
+        groupHtml += `<div class="fixed-val" id="d3_fixed_disp" style="margin-top:4px;">0 pt 固定</div>`;
       } else if (item.type === 'sand_ratio' || item.type === 'kangaku_card_people' || item.type === 'd4_patrol_land_val' || item.type === 'd6_fukuryo_speed' || item.type === 'd6_fukuryo_hours') {
-        html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder}" value="${item.default_value || ''}" oninput="calc()">`;
-        if (item.note) html += `<div class="note-text">${item.note}</div>`;
+        groupHtml += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder}" value="${item.default_value || ''}" oninput="calc()">`;
+        if (item.note) groupHtml += `<div class="note-text">${item.note}</div>`;
       } else {
-        html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" oninput="calc()">`;
-        if (item.note) html += `<div class="note-text">${item.note}</div>`;
-        html += `<div class="sub-preview" id="${item.id}-p"></div>`;
+        groupHtml += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" oninput="calc()">`;
+        if (item.note) groupHtml += `<div class="note-text">${item.note}</div>`;
+        groupHtml += `<div class="sub-preview" id="${item.id}-p"></div>`;
       }
       
-      html += `</div>`;
+      groupHtml += `</div>`;
     });
 
+    if (currentGroup !== "") {
+      groupHtml += `</div>`; // 最後のカードを閉じる
+    }
+
+    html += groupHtml;
     dayWrap.innerHTML = html;
     daysContainer.appendChild(dayWrap);
   });
