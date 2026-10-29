@@ -102,12 +102,12 @@ function renderUI() {
           <input type="text" id="d1_night_speed" class="save-input" placeholder="例: 2.73万 または 27300" value="${day.night_market.default_speed || ''}" oninput="calc()">
         </div>
         <div class="item-row">
-          <div class="label-container"><label>貯めた時間 (時間 / 最大72時間)</label></div>
+          <div class="label-container"><label>盛唐夜市：貯めた時間 (時間 / 最大72時間)</label></div>
           <input type="text" id="d1_night_72h" class="save-input" placeholder="時間 (例: 72)" value="${day.night_market.default_h72 || ''}" oninput="calc()">
           <div class="sub-preview" id="d1_night_72h-p"></div>
         </div>
         <div class="item-row">
-          <div class="label-container"><label>自然経過時間 (時間 / 最大22時間)</label></div>
+          <div class="label-container"><label>盛唐夜市：自然経過時間 (時間 / 最大22時間)</label></div>
           <input type="text" id="d1_night_22h" class="save-input" placeholder="時間 (例: 22)" value="${day.night_market.default_h22 || ''}" oninput="calc()">
           <div class="sub-preview" id="d1_night_22h-p"></div>
         </div>
@@ -126,12 +126,12 @@ function renderUI() {
           <input type="text" id="d5_kangaku_speed" class="save-input" placeholder="例: 410" value="${day.kangaku_market.default_speed || ''}" oninput="calc()">
         </div>
         <div class="item-row">
-          <div class="label-container"><label>貯めた時間 (時間 / 最大72時間)</label></div>
+          <div class="label-container"><label>諸子百家：貯めた時間 (時間 / 最大72時間)</label></div>
           <input type="text" id="d5_kangaku_72h" class="save-input" placeholder="時間 (例: 72)" value="${day.kangaku_market.default_h72 || ''}" oninput="calc()">
           <div class="sub-preview" id="d5_kangaku_72h-p"></div>
         </div>
         <div class="item-row">
-          <div class="label-container"><label>自然経過時間 (時間 / 最大22時間)</label></div>
+          <div class="label-container"><label>諸子百家：自然経過時間 (時間 / 最大22時間)</label></div>
           <input type="text" id="d5_kangaku_22h" class="save-input" placeholder="時間 (例: 22)" value="${day.kangaku_market.default_h22 || ''}" oninput="calc()">
           <div class="sub-preview" id="d5_kangaku_22h-p"></div>
         </div>
@@ -145,8 +145,8 @@ function renderUI() {
         
         let displayLabel = item.label;
         if (displayLabel.includes("盛唐夜市：来客")) displayLabel = "盛唐夜市：来客人数 (人/時間)";
-        if (displayLabel === "砂時計1個あたりの貢物数" || displayLabel === '"時の砂"1個あたりの貢物数') displayLabel = "時の砂1個あたりの貢物数";
-        if (displayLabel === "エジプト：砂時計" || displayLabel === 'エジプト："時の砂"') displayLabel = "エジプト：時の砂";
+        if (displayLabel === "砂時計1個あたりの貢物数" || displayLabel === '"時の砂"1個あたりの貢物数') displayLabel = "エジプト：時の砂1個あたりの貢物数";
+        if (displayLabel === "エジプト：砂時計") displayLabel = "エジプト：時の砂";
 
         html += `<div class="item-row">`;
         html += `
@@ -162,7 +162,7 @@ function renderUI() {
           html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" value="${item.default_value || ''}" oninput="calc()">`;
           if (item.note) html += `<div class="note-text">${item.note}</div>`;
           html += `<div class="sub-preview" id="d3_fixed_disp"></div>`;
-        } else if (['sand_ratio', 'kangaku_card_people', 'd4_patrol_land_val', 'd6_fukuryo_speed', 'd6_fukuryo_hours'].includes(item.type)) {
+        } else if (['sand_ratio', 'd4_patrol_land_val', 'd6_fukuryo_speed', 'd6_fukuryo_hours'].includes(item.type)) {
           html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" value="${item.default_value || ''}" oninput="calc()">`;
           if (item.note) html += `<div class="note-text">${item.note}</div>`;
         } else {
@@ -348,10 +348,10 @@ function calc() {
           const pEl = document.getElementById(`${item.id}-p`);
           if (pEl) pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (巡回${itemN.toLocaleString()}回分) ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt (期待値)` : '';
         }
-        else if (item.type === 'kangaku_card') {
-          const peoplePerCard = parseNum(document.getElementById('d5_kangaku_card_people')?.value);
+        else if (item.type === 'kangaku_card' || item.type === 'kangaku_card_people') {
+          const speedVal = parseNum(document.getElementById('d5_kangaku_speed')?.value);
           const cardN = parseNum(document.getElementById(item.id)?.value);
-          itemPt = cardN * peoplePerCard * 0.01;
+          itemPt = cardN * speedVal * 0.01;
           const pEl = document.getElementById(`${item.id}-p`);
           if (pEl) pEl.innerText = cardN ? `${cardN.toLocaleString()}枚 ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
         }
@@ -371,7 +371,7 @@ function calc() {
           const pEl = document.getElementById(`${item.id}-p`);
           if (pEl) pEl.innerText = num ? `時の砂${num.toLocaleString()}個 (貢物${tribTotal.toLocaleString()}個 / 祈祷${count.toLocaleString()}回分) ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
         }
-        else if (['sand_ratio', 'kangaku_card_people', 'd4_patrol_land_val', 'd6_fukuryo_speed', 'd6_fukuryo_hours'].includes(item.type)) {
+        else if (['sand_ratio', 'd4_patrol_land_val', 'd6_fukuryo_speed', 'd6_fukuryo_hours'].includes(item.type)) {
           itemPt = 0;
         }
         else if (item.type === 'nikuman') {
