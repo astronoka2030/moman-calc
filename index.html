@@ -325,7 +325,7 @@ function renderUI() {
     bonusContainer.appendChild(div);
   });
 
-  // 各日エリアのグループ化レンダリング
+  // 各日エリアの表示定義
   const daysContainer = document.getElementById('days-container');
   daysContainer.innerHTML = '';
 
@@ -339,8 +339,8 @@ function renderUI() {
       </div>
     `;
 
-    // 1日目：盛唐夜市グループ
-    if (day.night_market) {
+    // --- 1日目：盛唐夜市（時間＋カードを統合） ---
+    if (day.day === 1 && day.night_market) {
       const helpBtn = day.night_market.help_img ? `<button class="help-btn" onclick="showModal('${day.night_market.help_img}')">💡 場所を確認</button>` : '';
       html += `
         <div class="group-card">
@@ -366,12 +366,28 @@ function renderUI() {
             </label>
             <input type="text" id="d1_night_22h" class="save-input" placeholder="時間 (例: 22)" value="${day.night_market.default_h22}" oninput="calc()">
           </div>
-        </div>
       `;
+
+      day.items.forEach(item => {
+        const itemHelpBtn = item.help_img ? `<button class="help-btn" onclick="showModal('${item.help_img}')">💡 場所を確認</button>` : '';
+        html += `
+          <div class="item-row">
+            <div class="label-container">
+              <label>${item.label}</label>
+              ${itemHelpBtn}
+            </div>
+            <input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" oninput="calc()">
+            ${item.note ? `<div class="note-text">${item.note}</div>` : ''}
+            <div class="sub-preview" id="${item.id}-p"></div>
+          </div>
+        `;
+      });
+
+      html += `</div>`;
     }
 
-    // 5日目：諸子百家グループ
-    if (day.kangaku_market) {
+    // --- 5日目：諸子百家（時間＋カードを統合） ---
+    else if (day.day === 5 && day.kangaku_market) {
       const helpBtn = day.kangaku_market.help_img ? `<button class="help-btn" onclick="showModal('${day.kangaku_market.help_img}')">💡 場所を確認</button>` : '';
       html += `
         <div class="group-card">
@@ -397,86 +413,132 @@ function renderUI() {
             </label>
             <input type="text" id="d5_kangaku_22h" class="save-input" placeholder="時間 (例: 22)" value="${day.kangaku_market.default_h22}" oninput="calc()">
           </div>
-        </div>
       `;
-    }
 
-    // アイテム群をプレフィックスや機能に基づいて自動グループ化
-    let currentGroup = "";
-    let groupHtml = "";
+      let silkHtml = "";
+      let seaSilkHtml = "";
+      let baseHtml = "";
 
-    day.items.forEach((item, idx) => {
-      let groupName = "基本項目";
-      
-      if (item.label.includes("知己：") || item.label.includes("巡回：") || item.type === "patrol_item") {
-        groupName = "知己・巡回関連";
-      } else if (item.label.includes("エジプト：")) {
-        groupName = "エジプト（南征北伐）";
-      } else if (item.label.includes("富貴栄華：") || item.type === "d6_fukuryo_item" || item.type === "fixed_simple") {
-        groupName = "富貴栄華";
-      } else if (item.label.includes("海上シルクロード") || item.label.includes("シルクロード：")) {
-        groupName = "シルクロード・貿易";
-      } else if (item.label.includes("諸子百家：") || item.type === "kangaku_card_people") {
-        groupName = "諸子百家カード";
-      } else if (item.label.includes("盛唐夜市：")) {
-        groupName = "盛唐夜市カード";
-      } else if (item.label.includes("資源") || item.label.includes("百工") || item.label.includes("天工") || item.label.includes("研究")) {
-        groupName = "生産・研究・資源";
-      }
-
-      // グループ切り替え処理
-      if (groupName !== currentGroup) {
-        if (currentGroup !== "") {
-          groupHtml += `</div>`; // 前のカードを閉じる
-        }
-        currentGroup = groupName;
-        groupHtml += `
-          <div class="group-card">
-            <div class="group-header">${groupName}</div>
+      day.items.forEach(item => {
+        const itemHelpBtn = item.help_img ? `<button class="help-btn" onclick="showModal('${item.help_img}')">💡 場所を確認</button>` : '';
+        const rowContent = `
+          <div class="item-row">
+            <div class="label-container">
+              <label>${item.label}</label>
+              ${itemHelpBtn}
+            </div>
+            <input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" value="${item.default_value || ''}" oninput="calc()">
+            ${item.note ? `<div class="note-text">${item.note}</div>` : ''}
+            <div class="sub-preview" id="${item.id}-p"></div>
+          </div>
         `;
-      } else {
-        // 同一グループ内なら区切り線を挿入
-        groupHtml += `<div class="item-row-divider"></div>`;
-      }
 
-      const helpBtn = item.help_img ? `<button class="help-btn" onclick="showModal('${item.help_img}')">💡 場所を確認</button>` : '';
-      
-      groupHtml += `<div class="item-row">`;
-      groupHtml += `
-        <div class="label-container">
-          <label>${item.label}</label>
-          ${helpBtn}
-        </div>
-      `;
-      
-      if (item.type === 'fixed_ship' || item.type === 'fixed_simple') {
-        groupHtml += `<div class="fixed-val" id="${item.id}_disp">0 pt 固定</div>`;
-      } else if (item.type === 'd3_resource_fixed') {
-        groupHtml += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder}" value="${item.default_value}" oninput="calc()">`;
-        if (item.note) groupHtml += `<div class="note-text">${item.note}</div>`;
-        groupHtml += `<div class="fixed-val" id="d3_fixed_disp" style="margin-top:4px;">0 pt 固定</div>`;
-      } else if (item.type === 'sand_ratio' || item.type === 'kangaku_card_people' || item.type === 'd4_patrol_land_val' || item.type === 'd6_fukuryo_speed' || item.type === 'd6_fukuryo_hours') {
-        groupHtml += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder}" value="${item.default_value || ''}" oninput="calc()">`;
-        if (item.note) groupHtml += `<div class="note-text">${item.note}</div>`;
-      } else {
-        groupHtml += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" oninput="calc()">`;
-        if (item.note) groupHtml += `<div class="note-text">${item.note}</div>`;
-        groupHtml += `<div class="sub-preview" id="${item.id}-p"></div>`;
-      }
-      
-      groupHtml += `</div>`;
-    });
+        if (item.label.includes("諸子百家：") || item.type === "kangaku_card_people") {
+          html += rowContent;
+        } else if (item.label.includes("海上シルクロード")) {
+          seaSilkHtml += `
+            <div class="group-card">
+              <div class="group-header">海上シルクロード</div>
+              <div class="item-row">
+                <div class="label-container"><label>${item.label}</label>${itemHelpBtn}</div>
+                <div class="fixed-val" id="${item.id}_disp">0 pt 固定</div>
+              </div>
+            </div>
+          `;
+        } else if (item.label.includes("シルクロード：")) {
+          silkHtml += `
+            <div class="group-card">
+              <div class="group-header">シルクロード・貿易</div>
+              ${rowContent}
+            </div>
+          `;
+        } else {
+          baseHtml += `
+            <div class="group-card">
+              <div class="group-header">基本項目</div>
+              ${rowContent}
+            </div>
+          `;
+        }
+      });
 
-    if (currentGroup !== "") {
-      groupHtml += `</div>`; // 最後のカードを閉じる
+      html += `</div>`;
+      html += silkHtml + seaSilkHtml + baseHtml;
     }
 
-    html += groupHtml;
+    // --- その他（2日目, 3日目, 4日目, 6日目） ---
+    else {
+      let currentGroup = "";
+      let groupHtml = "";
+
+      day.items.forEach(item => {
+        let groupName = "基本項目";
+
+        if (item.label.includes("エジプト：") || item.type === "sand_ratio" || item.type === "sand") {
+          groupName = "エジプト";
+        } else if (item.label.includes("虎杢")) {
+          groupName = "虎杢";
+        } else if (item.label.includes("スタミナ") || item.type === "nikuman") {
+          groupName = "遠征スタミナ";
+        } else if (item.label.includes("知己：") || item.label.includes("巡回：") || item.type === "patrol_item" || item.type === "d4_patrol_item" || item.type === "d4_patrol_land_val") {
+          groupName = "知己・巡回関連";
+        } else if (item.label.includes("富貴栄華：") || item.type === "d6_fukuryo_item") {
+          groupName = "富貴栄華";
+        } else if (item.label.includes("長城：") || item.label.includes("占星：")) {
+          groupName = "建築・占星";
+        } else if (item.label.includes("生産") || item.label.includes("百工") || item.label.includes("天工") || item.label.includes("研究") || item.type === "d3_resource_fixed") {
+          groupName = "生産・研究・資源";
+        }
+
+        let displayLabel = item.label;
+        if (displayLabel === "砂時計1個あたりの貢物数") displayLabel = '"時の砂"1個あたりの貢物数';
+        if (displayLabel === "エジプト：砂時計") displayLabel = 'エジプト："時の砂"';
+
+        if (groupName !== currentGroup) {
+          if (currentGroup !== "") groupHtml += `</div>`;
+          currentGroup = groupName;
+          groupHtml += `
+            <div class="group-card">
+              <div class="group-header">${groupName}</div>
+          `;
+        }
+
+        const helpBtn = item.help_img ? `<button class="help-btn" onclick="showModal('${item.help_img}')">💡 場所を確認</button>` : '';
+        
+        groupHtml += `<div class="item-row">`;
+        groupHtml += `
+          <div class="label-container">
+            <label>${displayLabel}</label>
+            ${helpBtn}
+          </div>
+        `;
+        
+        if (item.type === 'fixed_ship' || item.type === 'fixed_simple') {
+          groupHtml += `<div class="fixed-val" id="${item.id}_disp">0 pt 固定</div>`;
+        } else if (item.type === 'd3_resource_fixed') {
+          groupHtml += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder}" value="${item.default_value}" oninput="calc()">`;
+          if (item.note) groupHtml += `<div class="note-text">${item.note}</div>`;
+          groupHtml += `<div class="fixed-val" id="d3_fixed_disp" style="margin-top:4px;">0 pt 固定</div>`;
+        } else if (item.type === 'sand_ratio' || item.type === 'kangaku_card_people' || item.type === 'd4_patrol_land_val' || item.type === 'd6_fukuryo_speed' || item.type === 'd6_fukuryo_hours') {
+          groupHtml += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder}" value="${item.default_value || ''}" oninput="calc()">`;
+          if (item.note) groupHtml += `<div class="note-text">${item.note}</div>`;
+        } else {
+          groupHtml += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" oninput="calc()">`;
+          if (item.note) groupHtml += `<div class="note-text">${item.note}</div>`;
+          groupHtml += `<div class="sub-preview" id="${item.id}-p"></div>`;
+        }
+        
+        groupHtml += `</div>`;
+      });
+
+      if (currentGroup !== "") groupHtml += `</div>`;
+      html += groupHtml;
+    }
+
     dayWrap.innerHTML = html;
     daysContainer.appendChild(dayWrap);
   });
 }
-
 function parseNum(val) {
   if (!val) return 0;
   val = val.trim().replace(/,/g, '');
@@ -595,14 +657,10 @@ function calc() {
         const hoursVal = parseNum(document.getElementById('d6_fukuryo_hours').value);
         const itemN = parseNum(document.getElementById(item.id).value);
 
-        // 1. 片道時間(分) = 175000 / (速度 + 25) + 68
         const oneWayMin = (175000 / (speedVal + 25)) + 68;
-        // 2. 総チャージ時間(分) = (茯苓餅数 × 30分) + (チャージ時間 × 60分)
         const totalChargeMin = (itemN * 30) + (hoursVal * 60);
-        // 3. 片道移動回数 ＆ 累計移動距離(里) [片道2,800里]
         const trips = totalChargeMin / oneWayMin;
         const totalDist = trips * 2800;
-        // 4. 獲得ポイント = INT(累計移動距離 / 500) × 100
         itemPt = Math.floor(totalDist / 500) * 100;
 
         const pEl = document.getElementById(`${item.id}-p`);
