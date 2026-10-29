@@ -390,8 +390,8 @@ function renderUI() {
         html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder}" value="${item.default_value}" oninput="calc()">`;
         if (item.note) html += `<div class="note-text">${item.note}</div>`;
         html += `<div class="fixed-val" id="d3_fixed_disp" style="margin-top:4px;">0 pt 固定</div>`;
-      } else if (item.type === 'sand_ratio' || item.type === 'kangaku_card_people' || item.type === 'd4_patrol_land_val') {
-        html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder}" value="${item.default_value}" oninput="calc()">`;
+      } else if (item.type === 'sand_ratio' || item.type === 'kangaku_card_people' || item.type === 'd4_patrol_land_val' || item.type === 'd6_fukuryo_speed' || item.type === 'd6_fukuryo_hours') {
+        html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder}" value="${item.default_value || ''}" oninput="calc()">`;
         if (item.note) html += `<div class="note-text">${item.note}</div>`;
       } else {
         html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" oninput="calc()">`;
@@ -469,6 +469,8 @@ function clearAll() {
       else if (input.id === 'd5_kangaku_card_people') input.value = '410';
       else if (input.id === 'd5_kangaku_72h') input.value = '72';
       else if (input.id === 'd5_kangaku_22h') input.value = '22';
+      else if (input.id === 'd6_fukuryo_speed') input.value = '300';
+      else if (input.id === 'd6_fukuryo_hours') input.value = '200';
       else input.value = '';
       localStorage.removeItem('moman_' + input.id);
     });
@@ -518,9 +520,28 @@ function calc() {
         const pEl = document.getElementById(`${item.id}-p`);
         if (pEl) pEl.innerText = sendenN ? `${sendenN.toLocaleString()}枚 ➔ ${itemPt.toFixed(1)} pt` : '';
       }
+      else if (item.type === 'd6_fukuryo_item') {
+        const speedVal = parseNum(document.getElementById('d6_fukuryo_speed').value);
+        const hoursVal = parseNum(document.getElementById('d6_fukuryo_hours').value);
+        const itemN = parseNum(document.getElementById(item.id).value);
+
+        // 1. 片道時間(分) = 175000 / (速度 + 25) + 68
+        const oneWayMin = (175000 / (speedVal + 25)) + 68;
+        // 2. 総チャージ時間(分) = (茯苓餅数 × 30分) + (チャージ時間 × 60分)
+        const totalChargeMin = (itemN * 30) + (hoursVal * 60);
+        // 3. 片道移動回数 ＆ 累計移動距離(里) [片道2,800里]
+        const trips = totalChargeMin / oneWayMin;
+        const totalDist = trips * 2800;
+        // 4. 獲得ポイント = INT(累計移動距離 / 500) × 100
+        itemPt = Math.floor(totalDist / 500) * 100;
+
+        const pEl = document.getElementById(`${item.id}-p`);
+        if (pEl) {
+          pEl.innerText = `移動約${trips.toFixed(1)}回 (${Math.floor(totalDist).toLocaleString()}里) ➔ ${itemPt.toLocaleString()} pt`;
+        }
+      }
       else if (item.type === 'patrol_item') {
         const itemN = parseNum(document.getElementById(item.id).value);
-        // 1日目・6日目: 知己好感度基礎(20.8pt × 情義倍率)
         const kokandoPtPerTimes = 20.8 * mult;
         itemPt = itemN * kokandoPtPerTimes;
         
@@ -530,7 +551,6 @@ function calc() {
       else if (item.type === 'd4_patrol_item') {
         const itemN = parseNum(document.getElementById(item.id).value);
         const rawLandVal = parseNum(document.getElementById('d4_patrol_land_val').value);
-        // "2.24万"も"22400"もparseNumで22400になるため、万単位(2.24)に変換して計算
         const landValInMan = rawLandVal / 10000;
         const landPtPerTimes = landValInMan * 5 * mult;
         const dropItemPt = 4.467;
@@ -562,7 +582,7 @@ function calc() {
         const pEl = document.getElementById(`${item.id}-p`);
         if (pEl) pEl.innerText = num ? `時の砂${num.toLocaleString()}個 (貢物${tribTotal.toLocaleString()}個 / 祈祷${count.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt` : '';
       }
-      else if (item.type === 'sand_ratio' || item.type === 'kangaku_card_people' || item.type === 'd4_patrol_land_val') {
+      else if (item.type === 'sand_ratio' || item.type === 'kangaku_card_people' || item.type === 'd4_patrol_land_val' || item.type === 'd6_fukuryo_speed' || item.type === 'd6_fukuryo_hours') {
         itemPt = 0;
       }
       else if (item.type === 'nikuman') {
