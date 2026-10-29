@@ -21,11 +21,14 @@
 
 <h2>🧮 同盟対決ポイント計算機</h2>
 
-<!-- 技巧ボーナス設定エリア -->
-<div class="bonus-card">
-  <div class="bonus-title">技巧対決ポイントボーナス設定 (9種)</div>
-  <div class="bonus-grid" id="bonus-container"></div>
+<!-- 技巧ボーナス設定エリア（アコーディオン対応） -->
+<div class="bonus-wrapper" id="bonus-wrapper">
+  <div class="bonus-title" onclick="toggleBonus()">
+    <span>技巧ボーナス設定</span>
+  </div>
+  <div id="bonus-container" class="bonus-card"></div>
 </div>
+
 
 <!-- 各日エリア -->
 <div id="days-container"></div>
