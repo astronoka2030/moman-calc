@@ -104,10 +104,12 @@ function renderUI() {
         <div class="item-row">
           <div class="label-container"><label>貯めた時間 (時間 / 最大72時間)</label></div>
           <input type="text" id="d1_night_72h" class="save-input" placeholder="時間 (例: 72)" value="${day.night_market.default_h72 || ''}" oninput="calc()">
+          <div class="sub-preview" id="d1_night_72h-p"></div>
         </div>
         <div class="item-row">
           <div class="label-container"><label>自然経過時間 (時間 / 最大22時間)</label></div>
           <input type="text" id="d1_night_22h" class="save-input" placeholder="時間 (例: 22)" value="${day.night_market.default_h22 || ''}" oninput="calc()">
+          <div class="sub-preview" id="d1_night_22h-p"></div>
         </div>
       `;
     }
@@ -126,10 +128,12 @@ function renderUI() {
         <div class="item-row">
           <div class="label-container"><label>貯めた時間 (時間 / 最大72時間)</label></div>
           <input type="text" id="d5_kangaku_72h" class="save-input" placeholder="時間 (例: 72)" value="${day.kangaku_market.default_h72 || ''}" oninput="calc()">
+          <div class="sub-preview" id="d5_kangaku_72h-p"></div>
         </div>
         <div class="item-row">
           <div class="label-container"><label>自然経過時間 (時間 / 最大22時間)</label></div>
           <input type="text" id="d5_kangaku_22h" class="save-input" placeholder="時間 (例: 22)" value="${day.kangaku_market.default_h22 || ''}" oninput="calc()">
+          <div class="sub-preview" id="d5_kangaku_22h-p"></div>
         </div>
       `;
     }
@@ -267,8 +271,16 @@ function calc() {
       const d1_h72 = parseNum(document.getElementById('d1_night_72h')?.value);
       const d1_h22 = parseNum(document.getElementById('d1_night_22h')?.value);
       
-      const nightFixedPt = (d1_h72 + d1_h22) * (d1_speed / 10000) * 100;
-      dayTotal += nightFixedPt;
+      const pt72 = d1_h72 * (d1_speed / 10000) * 100;
+      const pt22 = d1_h22 * (d1_speed / 10000) * 100;
+      
+      const p72El = document.getElementById('d1_night_72h-p');
+      if (p72El) p72El.innerText = d1_h72 ? `${d1_h72}時間 ➔ ${pt72.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
+
+      const p22El = document.getElementById('d1_night_22h-p');
+      if (p22El) p22El.innerText = d1_h22 ? `${d1_h22}時間 ➔ ${pt22.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
+
+      dayTotal += (pt72 + pt22);
     }
 
     // 5日目：諸子百家経過計算
@@ -277,8 +289,16 @@ function calc() {
       const d5_h72 = parseNum(document.getElementById('d5_kangaku_72h')?.value);
       const d5_h22 = parseNum(document.getElementById('d5_kangaku_22h')?.value);
       
-      const kangakuFixedPt = d5_speed * 60 * (d5_h72 + d5_h22) * 0.01;
-      dayTotal += kangakuFixedPt;
+      const pt72 = d5_speed * 60 * d5_h72 * 0.01;
+      const pt22 = d5_speed * 60 * d5_h22 * 0.01;
+
+      const p72El = document.getElementById('d5_kangaku_72h-p');
+      if (p72El) p72El.innerText = d5_h72 ? `${d5_h72}時間 ➔ ${pt72.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
+
+      const p22El = document.getElementById('d5_kangaku_22h-p');
+      if (p22El) p22El.innerText = d5_h22 ? `${d5_h22}時間 ➔ ${pt22.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
+
+      dayTotal += (pt72 + pt22);
     }
 
     if (day.items) {
@@ -291,7 +311,7 @@ function calc() {
           const sendenN = parseNum(document.getElementById(item.id)?.value);
           itemPt = sendenN * ((d1_speed / 10000) / 6) * 100;
           const pEl = document.getElementById(`${item.id}-p`);
-          if (pEl) pEl.innerText = sendenN ? `${sendenN.toLocaleString()}枚 ➔ ${itemPt.toFixed(1)} pt` : '';
+          if (pEl) pEl.innerText = sendenN ? `${sendenN.toLocaleString()}枚 ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
         }
         else if (item.type === 'd6_fukuryo_item') {
           const speedVal = parseNum(document.getElementById('d6_fukuryo_speed')?.value);
@@ -315,7 +335,7 @@ function calc() {
           itemPt = itemN * kokandoPtPerTimes;
           
           const pEl = document.getElementById(`${item.id}-p`);
-          if (pEl) pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (巡回${itemN.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt (期待値)` : '';
+          if (pEl) pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (巡回${itemN.toLocaleString()}回分) ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt (期待値)` : '';
         }
         else if (item.type === 'd4_patrol_item') {
           const itemN = parseNum(document.getElementById(item.id)?.value);
@@ -326,21 +346,21 @@ function calc() {
           itemPt = itemN * (landPtPerTimes + dropItemPt);
 
           const pEl = document.getElementById(`${item.id}-p`);
-          if (pEl) pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (巡回${itemN.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt (期待値)` : '';
+          if (pEl) pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (巡回${itemN.toLocaleString()}回分) ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt (期待値)` : '';
         }
         else if (item.type === 'kangaku_card') {
           const peoplePerCard = parseNum(document.getElementById('d5_kangaku_card_people')?.value);
           const cardN = parseNum(document.getElementById(item.id)?.value);
           itemPt = cardN * peoplePerCard * 0.01;
           const pEl = document.getElementById(`${item.id}-p`);
-          if (pEl) pEl.innerText = cardN ? `${cardN.toLocaleString()}枚 ➔ ${itemPt.toFixed(1)} pt` : '';
+          if (pEl) pEl.innerText = cardN ? `${cardN.toLocaleString()}枚 ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
         }
         else if (item.type === 'trib') {
           const num = parseNum(document.getElementById(item.id)?.value);
           const count = Math.floor(num / 100);
           itemPt = count * 25;
           const pEl = document.getElementById(`${item.id}-p`);
-          if (pEl) pEl.innerText = num ? `祈祷${count.toLocaleString()}回分 ➔ ${itemPt.toFixed(1)} pt` : '';
+          if (pEl) pEl.innerText = num ? `祈祷${count.toLocaleString()}回分 ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
         }
         else if (item.type === 'sand') {
           const ratio = parseNum(document.getElementById('d2_sand_ratio')?.value);
@@ -349,7 +369,7 @@ function calc() {
           const count = Math.floor(tribTotal / 100);
           itemPt = count * 25;
           const pEl = document.getElementById(`${item.id}-p`);
-          if (pEl) pEl.innerText = num ? `時の砂${num.toLocaleString()}個 (貢物${tribTotal.toLocaleString()}個 / 祈祷${count.toLocaleString()}回分) ➔ ${itemPt.toFixed(1)} pt` : '';
+          if (pEl) pEl.innerText = num ? `時の砂${num.toLocaleString()}個 (貢物${tribTotal.toLocaleString()}個 / 祈祷${count.toLocaleString()}回分) ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
         }
         else if (['sand_ratio', 'kangaku_card_people', 'd4_patrol_land_val', 'd6_fukuryo_speed', 'd6_fukuryo_hours'].includes(item.type)) {
           itemPt = 0;
@@ -358,7 +378,7 @@ function calc() {
           const num = parseNum(document.getElementById(item.id)?.value);
           itemPt = num * 3 * 20 * mult;
           const pEl = document.getElementById(`${item.id}-p`);
-          if (pEl) pEl.innerText = num ? `スタミナ${(num*3).toLocaleString()}回復 ➔ ${itemPt.toFixed(1)} pt` : '';
+          if (pEl) pEl.innerText = num ? `スタミナ${(num*3).toLocaleString()}回復 ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
         }
         else if (item.type === 'fixed_ship') {
           itemPt = item.base_pt * mult;
@@ -380,7 +400,7 @@ function calc() {
           const num = parseNum(document.getElementById(item.id)?.value);
           itemPt = num * item.unit_pt * mult;
           const pEl = document.getElementById(`${item.id}-p`);
-          if (pEl) pEl.innerText = num ? `${num.toLocaleString()} ➔ ${itemPt.toFixed(1)} pt` : '';
+          if (pEl) pEl.innerText = num ? `${num.toLocaleString()} ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
         }
 
         dayTotal += itemPt;
