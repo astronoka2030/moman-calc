@@ -59,10 +59,10 @@ function renderUI() {
       div.className = 'bonus-item';
       
       let optionsHtml = '';
-      if (configData.bonus_options) {
-        configData.bonus_options.forEach(opt => {
-          const selected = (opt === configData.default_bonus) ? 'selected' : '';
-          optionsHtml += `<option value="${opt}" ${selected}>${opt}%</option>`;
+      if (configData.level_options) {
+        configData.level_options.forEach(opt => {
+          const selected = (opt.level === configData.default_level) ? 'selected' : '';
+          optionsHtml += `<option value="${opt.bonus}" ${selected}>Lv.${opt.level} (+${opt.bonus}%)</option>`;
         });
       }
 
@@ -80,7 +80,7 @@ function renderUI() {
 
   daysData.forEach(day => {
     const dayWrap = document.createElement('div');
-    dayWrap.className = 'day-wrapper'; // タイトルと入力カードを包んで密着させる
+    dayWrap.className = 'day-wrapper';
     
     let html = `
       <div class="day-title">
@@ -171,13 +171,12 @@ function renderUI() {
       });
     }
 
-    html += `</div>`; // .day-card を閉じる
+    html += `</div>`;
     dayWrap.innerHTML = html;
     daysContainer.appendChild(dayWrap);
   });
 }
 
-// 万付き・実数（コンマ区切り）のどちらも判定して数値化する統一パース関数
 function parseNum(val) {
   if (!val) return 0;
   val = String(val).trim().replace(/,/g, '');
@@ -256,7 +255,7 @@ function calc() {
   daysData.forEach(day => {
     let dayTotal = 0;
 
-    // 1日目：盛唐夜市経過計算（万人換算して計算）
+    // 1日目：盛唐夜市経過計算
     if (day.night_market) {
       const d1_speed = parseNum(document.getElementById('d1_night_speed')?.value);
       const d1_h72 = parseNum(document.getElementById('d1_night_72h')?.value);
