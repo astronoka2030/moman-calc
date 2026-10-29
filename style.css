@@ -73,6 +73,8 @@ h2 {
 .day-subtotal {
   font-size: 0.85rem;
   color: #f39c12;
+  margin-left: auto; /* 左側に自動余白を入れて右に押し出す */
+  margin-right: 8px; /* 矢印（▼）との間に少し間隔を空ける */
   font-weight: bold;
 }
 
