@@ -168,7 +168,7 @@ function renderUI() {
           html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" value="${item.default_value || ''}" oninput="calc()">`;
           if (item.note) html += `<div class="note-text">${item.note}</div>`;
           html += `<div class="sub-preview" id="d3_fixed_disp"></div>`;
-        } else if (['sand_ratio', 'd4_patrol_land_val'].includes(item.type)) {
+        } else if (['sand_ratio', 'd4_patrol_land_val', 'd6_fukuryo_speed'].includes(item.type)) {
           html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" value="${item.default_value || ''}" oninput="calc()">`;
           if (item.note) html += `<div class="note-text">${item.note}</div>`;
         } else {
@@ -393,7 +393,7 @@ function calc() {
           const pEl = document.getElementById(`${item.id}-p`);
           if (pEl) pEl.innerText = num ? `時の砂${num.toLocaleString()}個 (貢物${tribTotal.toLocaleString()}個 / 祈祷${count.toLocaleString()}回分) ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
         }
-        else if (['sand_ratio', 'd4_patrol_land_val'].includes(item.type)) {
+        else if (['sand_ratio', 'd4_patrol_land_val', 'd6_fukuryo_speed'].includes(item.type)) {
           itemPt = 0;
         }
         else if (item.type === 'nikuman') {
