@@ -162,7 +162,7 @@ function renderUI() {
           html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" value="${item.default_value || ''}" oninput="calc()">`;
           if (item.note) html += `<div class="note-text">${item.note}</div>`;
           html += `<div class="sub-preview" id="d3_fixed_disp"></div>`;
-        } else if (['sand_ratio', 'd4_patrol_land_val', 'd6_fukuryo_speed', 'd6_fukuryo_hours'].includes(item.type)) {
+        } else if (['sand_ratio', 'd4_patrol_land_val', 'd6_fukuryo_speed'].includes(item.type)) {
           html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" value="${item.default_value || ''}" oninput="calc()">`;
           if (item.note) html += `<div class="note-text">${item.note}</div>`;
         } else {
@@ -313,20 +313,34 @@ function calc() {
           const pEl = document.getElementById(`${item.id}-p`);
           if (pEl) pEl.innerText = sendenN ? `${sendenN.toLocaleString()}枚 ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
         }
-        else if (item.type === 'd6_fukuryo_item') {
+        else if (item.type === 'd6_fukuryo_hours') {
           const speedVal = parseNum(document.getElementById('d6_fukuryo_speed')?.value);
           const hoursVal = parseNum(document.getElementById('d6_fukuryo_hours')?.value);
-          const itemN = parseNum(document.getElementById(item.id)?.value);
 
           const oneWayMin = (175000 / (speedVal + 25)) + 68;
-          const totalChargeMin = (itemN * 30) + (hoursVal * 60);
+          const totalChargeMin = hoursVal * 60;
           const trips = totalChargeMin / oneWayMin;
           const totalDist = trips * 2800;
           itemPt = Math.floor(totalDist / 500) * 100;
 
           const pEl = document.getElementById(`${item.id}-p`);
           if (pEl) {
-            pEl.innerText = `移動約${trips.toFixed(1)}回 (${Math.floor(totalDist).toLocaleString()}里) ➔ ${itemPt.toLocaleString()} pt`;
+            pEl.innerText = hoursVal ? `${hoursVal}時間 (移動約${trips.toFixed(1)}回 / ${Math.floor(totalDist).toLocaleString()}里) ➔ ${itemPt.toLocaleString()} pt` : '';
+          }
+        }
+        else if (item.type === 'd6_fukuryo_item') {
+          const speedVal = parseNum(document.getElementById('d6_fukuryo_speed')?.value);
+          const itemN = parseNum(document.getElementById(item.id)?.value);
+
+          const oneWayMin = (175000 / (speedVal + 25)) + 68;
+          const totalChargeMin = itemN * 30;
+          const trips = totalChargeMin / oneWayMin;
+          const totalDist = trips * 2800;
+          itemPt = Math.floor(totalDist / 500) * 100;
+
+          const pEl = document.getElementById(`${item.id}-p`);
+          if (pEl) {
+            pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (移動約${trips.toFixed(1)}回 / ${Math.floor(totalDist).toLocaleString()}里) ➔ ${itemPt.toLocaleString()} pt` : '';
           }
         }
         else if (item.type === 'patrol_item') {
@@ -371,7 +385,7 @@ function calc() {
           const pEl = document.getElementById(`${item.id}-p`);
           if (pEl) pEl.innerText = num ? `時の砂${num.toLocaleString()}個 (貢物${tribTotal.toLocaleString()}個 / 祈祷${count.toLocaleString()}回分) ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
         }
-        else if (['sand_ratio', 'd4_patrol_land_val', 'd6_fukuryo_speed', 'd6_fukuryo_hours'].includes(item.type)) {
+        else if (['sand_ratio', 'd4_patrol_land_val', 'd6_fukuryo_speed'].includes(item.type)) {
           itemPt = 0;
         }
         else if (item.type === 'nikuman') {
