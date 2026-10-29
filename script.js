@@ -80,6 +80,7 @@ function renderUI() {
 
   daysData.forEach(day => {
     const dayWrap = document.createElement('div');
+    dayWrap.className = 'day-wrapper'; // タイトルと入力カードを包んで密着させる
     
     let html = `
       <div class="day-title">
@@ -95,10 +96,10 @@ function renderUI() {
       html += `
         <div class="item-row">
           <div class="label-container">
-            <label>盛唐夜市：来客人数 (万人/時間)</label>
+            <label>盛唐夜市：来客人数 (人/時間)</label>
             ${helpBtn}
           </div>
-          <input type="text" id="d1_night_speed" class="save-input" placeholder="例: 2.67" value="${day.night_market.default_speed || ''}" oninput="calc()">
+          <input type="text" id="d1_night_speed" class="save-input" placeholder="例: 2.73万 または 27300" value="${day.night_market.default_speed || ''}" oninput="calc()">
         </div>
         <div class="item-row">
           <div class="label-container"><label>貯めた時間 (時間 / 最大72時間)</label></div>
@@ -139,7 +140,7 @@ function renderUI() {
         const helpBtn = item.help_img ? `<button class="help-btn" onclick="showModal('${item.help_img}')">💡 場所を確認</button>` : '';
         
         let displayLabel = item.label;
-        if (displayLabel === "盛唐夜市：来客数 (万人/時間)") displayLabel = "盛唐夜市：来客人数 (万人/時間)";
+        if (displayLabel.includes("盛唐夜市：来客")) displayLabel = "盛唐夜市：来客人数 (人/時間)";
         if (displayLabel === "砂時計1個あたりの貢物数" || displayLabel === '"時の砂"1個あたりの貢物数') displayLabel = "時の砂1個あたりの貢物数";
         if (displayLabel === "エジプト：砂時計" || displayLabel === 'エジプト："時の砂"') displayLabel = "エジプト：時の砂";
 
@@ -170,12 +171,13 @@ function renderUI() {
       });
     }
 
-    html += `</div>`;
+    html += `</div>`; // .day-card を閉じる
     dayWrap.innerHTML = html;
     daysContainer.appendChild(dayWrap);
   });
 }
 
+// 万付き・実数（コンマ区切り）のどちらも判定して数値化する統一パース関数
 function parseNum(val) {
   if (!val) return 0;
   val = String(val).trim().replace(/,/g, '');
@@ -229,7 +231,7 @@ function clearAll() {
   if (confirm('すべての入力数値をクリア（リセット）しますか？')) {
     document.querySelectorAll('.save-input').forEach(input => {
       if (input.id === 'd3_item_count') input.value = '18';
-      else if (input.id === 'd1_night_speed') input.value = '2.67';
+      else if (input.id === 'd1_night_speed') input.value = '2.73万';
       else if (input.id === 'd1_night_72h') input.value = '72';
       else if (input.id === 'd1_night_22h') input.value = '22';
       else if (input.id === 'd2_sand_ratio') input.value = '57';
@@ -254,13 +256,13 @@ function calc() {
   daysData.forEach(day => {
     let dayTotal = 0;
 
-    // 1日目：盛唐夜市経過計算
+    // 1日目：盛唐夜市経過計算（万人換算して計算）
     if (day.night_market) {
       const d1_speed = parseNum(document.getElementById('d1_night_speed')?.value);
       const d1_h72 = parseNum(document.getElementById('d1_night_72h')?.value);
       const d1_h22 = parseNum(document.getElementById('d1_night_22h')?.value);
       
-      const nightFixedPt = (d1_h72 + d1_h22) * d1_speed * 100;
+      const nightFixedPt = (d1_h72 + d1_h22) * (d1_speed / 10000) * 100;
       dayTotal += nightFixedPt;
     }
 
@@ -282,7 +284,7 @@ function calc() {
         if (item.type === 'senden') {
           const d1_speed = parseNum(document.getElementById('d1_night_speed')?.value);
           const sendenN = parseNum(document.getElementById(item.id)?.value);
-          itemPt = sendenN * (d1_speed / 6) * 100;
+          itemPt = sendenN * ((d1_speed / 10000) / 6) * 100;
           const pEl = document.getElementById(`${item.id}-p`);
           if (pEl) pEl.innerText = sendenN ? `${sendenN.toLocaleString()}枚 ➔ ${itemPt.toFixed(1)} pt` : '';
         }
