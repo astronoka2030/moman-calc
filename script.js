@@ -50,6 +50,12 @@ function closeModal() {
   }
 }
 
+function toggleDay(wrapperEl) {
+  if (wrapperEl) {
+    wrapperEl.classList.toggle('collapsed');
+  }
+}
+
 function renderUI() {
   const bonusContainer = document.getElementById('bonus-container');
   if (bonusContainer) {
@@ -83,7 +89,7 @@ function renderUI() {
     dayWrap.className = 'day-wrapper';
     
     let html = `
-      <div class="day-title">
+      <div class="day-title" onclick="toggleDay(this.parentElement)">
         <span>${day.title}</span>
         <span class="day-subtotal" id="d${day.day}_total_disp">0 pt</span>
       </div>
@@ -92,7 +98,7 @@ function renderUI() {
 
     // 1日目：盛唐夜市（時間部分）
     if (day.day === 1 && day.night_market) {
-      const helpBtn = day.night_market.help_img ? `<button class="help-btn" onclick="showModal('${day.night_market.help_img}')">💡 場所を確認</button>` : '';
+      const helpBtn = day.night_market.help_img ? `<button class="help-btn" onclick="event.stopPropagation(); showModal('${day.night_market.help_img}')">💡 場所を確認</button>` : '';
       html += `
         <div class="item-row">
           <div class="label-container">
@@ -116,7 +122,7 @@ function renderUI() {
 
     // 5日目：諸子百家（時間部分）
     if (day.day === 5 && day.kangaku_market) {
-      const helpBtn = day.kangaku_market.help_img ? `<button class="help-btn" onclick="showModal('${day.kangaku_market.help_img}')">💡 場所を確認</button>` : '';
+      const helpBtn = day.kangaku_market.help_img ? `<button class="help-btn" onclick="event.stopPropagation(); showModal('${day.kangaku_market.help_img}')">💡 場所を確認</button>` : '';
       html += `
         <div class="item-row">
           <div class="label-container">
@@ -141,7 +147,7 @@ function renderUI() {
     // アイテム展開
     if (day.items) {
       day.items.forEach(item => {
-        const helpBtn = item.help_img ? `<button class="help-btn" onclick="showModal('${item.help_img}')">💡 場所を確認</button>` : '';
+        const helpBtn = item.help_img ? `<button class="help-btn" onclick="event.stopPropagation(); showModal('${item.help_img}')">💡 場所を確認</button>` : '';
         
         let displayLabel = item.label;
         if (displayLabel.includes("盛唐夜市：来客")) displayLabel = "盛唐夜市：来客人数 (人/時間)";
@@ -162,7 +168,7 @@ function renderUI() {
           html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" value="${item.default_value || ''}" oninput="calc()">`;
           if (item.note) html += `<div class="note-text">${item.note}</div>`;
           html += `<div class="sub-preview" id="d3_fixed_disp"></div>`;
-        } else if (['sand_ratio', 'd4_patrol_land_val', 'd6_fukuryo_speed'].includes(item.type)) {
+        } else if (['sand_ratio', 'd4_patrol_land_val'].includes(item.type)) {
           html += `<input type="text" id="${item.id}" class="save-input" placeholder="${item.placeholder || ''}" value="${item.default_value || ''}" oninput="calc()">`;
           if (item.note) html += `<div class="note-text">${item.note}</div>`;
         } else {
@@ -321,11 +327,12 @@ function calc() {
           const totalChargeMin = hoursVal * 60;
           const trips = totalChargeMin / oneWayMin;
           const totalDist = trips * 2800;
-          itemPt = Math.floor(totalDist / 500) * 100;
+          const basePt = Math.floor(totalDist / 500) * 100;
+          itemPt = basePt * mult;
 
           const pEl = document.getElementById(`${item.id}-p`);
           if (pEl) {
-            pEl.innerText = hoursVal ? `${hoursVal}時間 (移動約${trips.toFixed(1)}回 / ${Math.floor(totalDist).toLocaleString()}里) ➔ ${itemPt.toLocaleString()} pt` : '';
+            pEl.innerText = hoursVal ? `${hoursVal}時間 (移動約${trips.toFixed(1)}回 / ${Math.floor(totalDist).toLocaleString()}里) ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
           }
         }
         else if (item.type === 'd6_fukuryo_item') {
@@ -336,15 +343,15 @@ function calc() {
           const totalChargeMin = itemN * 30;
           const trips = totalChargeMin / oneWayMin;
           const totalDist = trips * 2800;
-          itemPt = Math.floor(totalDist / 500) * 100;
+          const basePt = Math.floor(totalDist / 500) * 100;
+          itemPt = basePt * mult;
 
           const pEl = document.getElementById(`${item.id}-p`);
           if (pEl) {
-            pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (移動約${trips.toFixed(1)}回 / ${Math.floor(totalDist).toLocaleString()}里) ➔ ${itemPt.toLocaleString()} pt` : '';
+            pEl.innerText = itemN ? `${itemN.toLocaleString()}個 (移動約${trips.toFixed(1)}回 / ${Math.floor(totalDist).toLocaleString()}里) ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
           }
         }
         else if (item.type === 'patrol_item') {
-          // 巡回回復薬（1日目および6日目の共通期待値計算）
           const itemN = parseNum(document.getElementById(item.id)?.value);
           const kokandoPtPerTimes = 20.8 * mult;
           itemPt = itemN * kokandoPtPerTimes;
@@ -386,7 +393,7 @@ function calc() {
           const pEl = document.getElementById(`${item.id}-p`);
           if (pEl) pEl.innerText = num ? `時の砂${num.toLocaleString()}個 (貢物${tribTotal.toLocaleString()}個 / 祈祷${count.toLocaleString()}回分) ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
         }
-        else if (['sand_ratio', 'd4_patrol_land_val', 'd6_fukuryo_speed'].includes(item.type)) {
+        else if (['sand_ratio', 'd4_patrol_land_val'].includes(item.type)) {
           itemPt = 0;
         }
         else if (item.type === 'nikuman') {
