@@ -444,3 +444,11 @@ function calc() {
 window.addEventListener('DOMContentLoaded', () => {
   loadAllJSON();
 });
+
+function toggleBonus() {
+  const wrapper = document.getElementById('bonus-wrapper');
+  if (wrapper) {
+    wrapper.classList.toggle('collapsed');
+  }
+}
+
