@@ -66,21 +66,14 @@
     border: 1px solid #aab7b8;
     background: #fff;
   }
-
-  /* 見出しと入力枠の一体化構造 */
-  .day-block {
-    margin-top: 18px;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    border: 1px solid #e1e8ed;
-  }
   .day-title {
     background: #2c3e50;
     color: #fff;
-    padding: 10px 12px;
+    padding: 8px 12px;
+    border-radius: 8px;
     font-size: 0.95rem;
     font-weight: bold;
+    margin-top: 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -90,9 +83,15 @@
     color: #f39c12;
     font-weight: bold;
   }
+
+  /* 1日1枠のスタイル */
   .day-card {
     background: #fff;
     padding: 12px;
+    border-radius: 8px;
+    margin-top: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #e1e8ed;
   }
   .item-row {
     margin-bottom: 10px;
@@ -314,7 +313,6 @@ function renderUI() {
 
   daysData.forEach(day => {
     const dayWrap = document.createElement('div');
-    dayWrap.className = 'day-block';
     
     let html = `
       <div class="day-title">
@@ -330,10 +328,10 @@ function renderUI() {
       html += `
         <div class="item-row">
           <div class="label-container">
-            <label>盛唐夜市：来客人数 (人/時間)</label>
+            <label>盛唐夜市：来客人数 (万人/時間)</label>
             ${helpBtn}
           </div>
-          <input type="text" id="d1_night_speed" class="save-input" placeholder="例: 2.73万 または 27300" value="${day.night_market.default_speed}" oninput="calc()">
+          <input type="text" id="d1_night_speed" class="save-input" placeholder="例: 2.67" value="${day.night_market.default_speed}" oninput="calc()">
         </div>
         <div class="item-row">
           <div class="label-container"><label>貯めた時間 (時間 / 最大72時間)</label></div>
@@ -368,14 +366,14 @@ function renderUI() {
       `;
     }
 
-    // 各日アイテムの個別生成
+    // アイテム展開
     day.items.forEach(item => {
       const helpBtn = item.help_img ? `<button class="help-btn" onclick="showModal('${item.help_img}')">💡 場所を確認</button>` : '';
       
       let displayLabel = item.label;
-      if (displayLabel.includes("盛唐夜市：来客")) displayLabel = "盛唐夜市：来客人数 (人/時間)";
-      if (displayLabel.includes("貢物数")) displayLabel = "時の砂1個あたりの貢物数";
-      if (displayLabel.includes("エジプト：")) displayLabel = "エジプト：時の砂";
+      if (displayLabel === "盛唐夜市：来客数 (万人/時間)") displayLabel = "盛唐夜市：来客人数 (万人/時間)";
+      if (displayLabel === "砂時計1個あたりの貢物数" || displayLabel === '"時の砂"1個あたりの貢物数') displayLabel = "時の砂1個あたりの貢物数";
+      if (displayLabel === "エジプト：砂時計" || displayLabel === 'エジプト："時の砂"') displayLabel = "エジプト：時の砂";
 
       html += `<div class="item-row">`;
       html += `
@@ -410,18 +408,13 @@ function renderUI() {
 }
 function parseNum(val) {
   if (!val) return 0;
-  val = String(val).trim().replace(/,/g, '');
+  val = val.trim().replace(/,/g, '');
   if (val.endsWith('万')) {
     const num = parseFloat(val.replace('万', ''));
     return isNaN(num) ? 0 : Math.round(num * 10000);
   }
   const num = parseFloat(val);
-  if (isNaN(num)) return 0;
-  // 万未満の小さな小数が入力された場合（例: 2.73 ➔ 27300）
-  if (num > 0 && num < 100) {
-    return Math.round(num * 10000);
-  }
-  return num;
+  return isNaN(num) ? 0 : num;
 }
 
 function fmtDayPt(pt) {
@@ -466,7 +459,7 @@ function clearAll() {
   if (confirm('すべての入力数値をクリア（リセット）しますか？')) {
     document.querySelectorAll('.save-input').forEach(input => {
       if (input.id === 'd3_item_count') input.value = '18';
-      else if (input.id === 'd1_night_speed') input.value = '2.73万';
+      else if (input.id === 'd1_night_speed') input.value = '2.67';
       else if (input.id === 'd1_night_72h') input.value = '72';
       else if (input.id === 'd1_night_22h') input.value = '22';
       else if (input.id === 'd2_sand_ratio') input.value = '57';
@@ -497,8 +490,7 @@ function calc() {
       const d1_h72 = parseNum(document.getElementById('d1_night_72h').value);
       const d1_h22 = parseNum(document.getElementById('d1_night_22h').value);
       
-      // (人数 / 10000) * 時間 * 100pt
-      const nightFixedPt = (d1_h72 + d1_h22) * (d1_speed / 10000) * 100;
+      const nightFixedPt = (d1_h72 + d1_h22) * d1_speed * 100;
       dayTotal += nightFixedPt;
     }
 
@@ -519,8 +511,7 @@ function calc() {
       if (item.type === 'senden') {
         const d1_speed = parseNum(document.getElementById('d1_night_speed').value);
         const sendenN = parseNum(document.getElementById(item.id).value);
-        // (来客数 / 10000 / 6) * 宣伝札枚数 * 100pt
-        itemPt = sendenN * ((d1_speed / 10000) / 6) * 100;
+        itemPt = sendenN * (d1_speed / 6) * 100;
         const pEl = document.getElementById(`${item.id}-p`);
         if (pEl) pEl.innerText = sendenN ? `${sendenN.toLocaleString()}枚 ➔ ${itemPt.toFixed(1)} pt` : '';
       }
