@@ -6,6 +6,7 @@
       "id": "d6_fukuryo_speed",
       "label": "富貴栄華：移動速度",
       "type": "d6_fukuryo_speed",
+      "tech_key": "bonus_jinki",
       "default_value": "300",
       "placeholder": "例: 300",
       "help_img": "Screenshot_20261029_091805.jpg",
