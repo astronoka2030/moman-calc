@@ -203,6 +203,41 @@ input[type="text"]:focus {
   box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
+/* 技巧ボーナス用のアコーディオンヘッダー */
+.bonus-title {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #34495e;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 8px 8px 0 0;
+}
+
+.bonus-title::after {
+  content: '▲';
+  font-size: 0.8rem;
+  margin-left: 8px;
+  transition: transform 0.2s ease;
+}
+
+/* 折りたたみ時の挙動 */
+.bonus-wrapper.collapsed .bonus-title::after {
+  transform: rotate(180deg);
+}
+
+.bonus-wrapper.collapsed .bonus-card {
+  display: none;
+}
+
+.bonus-wrapper.collapsed .bonus-title {
+  border-radius: 8px; /* 閉じている時は角丸を全体に適用 */
+}
+
+
 /* アコーディオン用のヘッダー調整 */
 .day-title {
   cursor: pointer;
