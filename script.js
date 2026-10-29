@@ -216,10 +216,16 @@ function loadInputs() {
     const savedVal = localStorage.getItem('moman_' + input.id);
     if (savedVal !== null) input.value = savedVal;
   });
+  
   document.querySelectorAll('.bonus-select').forEach(sel => {
     const savedVal = localStorage.getItem('moman_' + sel.id);
-    if (savedVal !== null) sel.value = savedVal;
+    if (savedVal !== null) {
+      const exists = Array.from(sel.options).some(opt => opt.value === savedVal);
+      const defaultBonus = configData.level_options ? configData.level_options.find(o => o.level === configData.default_level)?.bonus : 75;
+      sel.value = exists ? savedVal : String(defaultBonus);
+    }
   });
+  
   document.querySelectorAll('.save-check').forEach(chk => {
     const savedVal = localStorage.getItem('moman_' + chk.id);
     if (savedVal !== null) chk.checked = (savedVal === 'true');
