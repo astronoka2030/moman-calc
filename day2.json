@@ -2,12 +2,54 @@
   "day": 2,
   "title": "2日目「南征北伐」",
   "items": [
-    { "id": "d2_trib", "label": "エジプト：貢物数 (100個で祈祷1回=25pt)", "placeholder": "例: 500", "type": "trib" },
-    { "id": "d2_sand_ratio", "label": "砂時計1個あたりの貢物数", "placeholder": "例: 57", "default_value": "57", "type": "sand_ratio", "help_img": "Screenshot_20261028_200848.jpg" },
-    { "id": "d2_sand", "label": "エジプト：砂時計", "placeholder": "個数 (例: 200)", "type": "sand" },
-    { "id": "d2_toramoku", "label": "虎杢 (1個=10pt / 虎杢消費)", "placeholder": "例: 1000", "note": "※龍甲片の10倍以下の数値にしてください", "unit_pt": 10, "tech_key": "b_toramoku" },
-    { "id": "d2_stamina", "label": "遠征スタミナ (1消費=20pt / 遠征スタミナ)", "placeholder": "消費スタミナ (例: 50)", "unit_pt": 20, "tech_key": "b_stamina" },
-    { "id": "d2_nikuman", "label": "肉まん (1個=スタミナ3回復=60pt / 遠征スタミナ)", "placeholder": "例: 20", "type": "nikuman", "tech_key": "b_stamina" },
-    { "id": "d2_tsubo", "label": "通宝使用数 (1個=20pt)", "placeholder": "例: 100", "unit_pt": 20 }
+    {
+      "id": "d2_trib",
+      "label": "エジプト：貢物数 (100個で祈祷1回=25pt)",
+      "type": "trib",
+      "placeholder": "個数 (例: 60000)"
+    },
+    {
+      "id": "d2_sand_ratio",
+      "label": "エジプト：時の砂1個あたりの貢物数",
+      "type": "sand_ratio",
+      "default_value": "57",
+      "placeholder": "例: 57",
+      "help_img": "sand_help.png"
+    },
+    {
+      "id": "d2_sand",
+      "label": "エジプト：時の砂",
+      "type": "sand",
+      "placeholder": "個数 (例: 2075)"
+    },
+    {
+      "id": "d2_toramoku",
+      "label": "虎杢 (1個=10pt / 虎杢消費)",
+      "unit_pt": 10,
+      "tech_key": "bonus_shinkou",
+      "placeholder": "個数 (例: 13150)",
+      "note": "※龍甲片の10倍以下の数値にしてください"
+    },
+    {
+      "id": "d2_stamina",
+      "label": "遠征スタミナ (1消費=20pt / 遠征スタミナ)",
+      "unit_pt": 20,
+      "tech_key": "bonus_itoku",
+      "placeholder": "スタミナ量 (例: 250)"
+    },
+    {
+      "id": "d2_nikuman",
+      "label": "肉まん (1個=スタミナ3回復=60pt / 遠征スタミナ)",
+      "type": "nikuman",
+      "tech_key": "bonus_itoku",
+      "placeholder": "個数 (例: 579)"
+    },
+    {
+      "id": "d2_ship",
+      "label": "海上シルクロード (鄭和の宝船 4隻固定 / 船団派遣)",
+      "type": "fixed_ship",
+      "base_pt": 19200,
+      "tech_key": "bonus_chikutai"
+    }
   ]
 }
