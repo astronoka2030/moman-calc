@@ -26,7 +26,7 @@
       "id": "d2_toramoku",
       "label": "虎杢 (1個=10pt / 虎杢消費)",
       "unit_pt": 10,
-      "tech_key": "bonus_shinkou",
+      "tech_key": "b_toramoku",
       "placeholder": "個数 (例: 13150)",
       "note": "※龍甲片の10倍以下の数値にしてください"
     },
@@ -34,14 +34,14 @@
       "id": "d2_stamina",
       "label": "遠征スタミナ (1消費=20pt / 遠征スタミナ)",
       "unit_pt": 20,
-      "tech_key": "bonus_itoku",
+      "tech_key": "b_stamina",
       "placeholder": "スタミナ量 (例: 250)"
     },
     {
       "id": "d2_nikuman",
       "label": "肉まん (1個=スタミナ3回復=60pt / 遠征スタミナ)",
       "type": "nikuman",
-      "tech_key": "bonus_itoku",
+      "tech_key": "b_stamina",
       "placeholder": "個数 (例: 579)"
     },
     {
@@ -49,7 +49,7 @@
       "label": "海上シルクロード (鄭和の宝船 4隻固定 / 船団派遣)",
       "type": "fixed_ship",
       "base_pt": 19200,
-      "tech_key": "bonus_chikutai"
+      "tech_key": "b_ship"
     }
   ]
 }
