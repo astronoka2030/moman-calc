@@ -421,8 +421,12 @@ function calc() {
         else {
           const num = parseNum(document.getElementById(item.id)?.value);
           itemPt = num * item.unit_pt * mult;
+          const boostedUnit = item.unit_pt * mult;
+          const unitStr = (boostedUnit % 1 === 0) ? boostedUnit : boostedUnit.toFixed(2);
+          const unitDisp = mult > 1 ? ` (基本:${item.unit_pt}pt → 反映:${unitStr}pt/個)` : '';
+
           const pEl = document.getElementById(`${item.id}-p`);
-          if (pEl) pEl.innerText = num ? `${num.toLocaleString()} ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
+          if (pEl) pEl.innerText = num ? `${num.toLocaleString()}個${unitDisp} ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
         }
 
         dayTotal += itemPt;
@@ -451,4 +455,3 @@ function toggleBonus() {
     wrapper.classList.toggle('collapsed');
   }
 }
-
