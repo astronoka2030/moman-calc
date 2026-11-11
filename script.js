@@ -467,4 +467,27 @@ function toggleBonus() {
   if (wrapper) {
     wrapper.classList.toggle('collapsed');
   }
+
+// テーマを切り替えて保存する関数
+function setTheme(themeName) {
+  // すべてのテーマクラスをいったん削除
+  document.body.classList.remove('theme-hachiware', 'theme-udon', 'theme-cucumber');
+  
+  // 新しいテーマが通常以外ならクラスを追加
+  if (themeName !== 'default') {
+    document.body.classList.add(`theme-${themeName}`);
+  }
+  
+  // スマホのブラウザに記憶させる
+  localStorage.setItem('moman_theme', themeName);
+}
+
+// ページを開いたときに保存されていたテーマを復元する処理
+window.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('moman_theme');
+  if (savedTheme) {
+    setTheme(savedTheme);
+  }
+});
+
 }
