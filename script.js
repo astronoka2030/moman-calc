@@ -429,15 +429,15 @@ function calc() {
           const pEl = document.getElementById(`${item.id}-p`);
           if (pEl) {
             if (num) {
-              // 技巧ボーナスが効いている場合は「基本: 〇〇 ➔ 反映後pt」を表示
+              // 技巧ボーナスが効いている場合は「基本: 〇〇 ➔ 反映後pt」を表示（色付き）
               if (mult > 1) {
-                pEl.innerText = `基本: ${baseTotal.toLocaleString()} ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt`;
+                pEl.innerHTML = `基本: ${baseTotal.toLocaleString()} ➔ <span class="boost-pt">${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt</span>`;
               } else {
-                // 技巧ボーナスがない場合は結果だけをシンプルに表示
-                pEl.innerText = `➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt`;
+                // 技巧ボーナスがない場合は結果だけをシンプルに表示（色付き）
+                pEl.innerHTML = `➔ <span class="boost-pt">${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt</span>`;
               }
             } else {
-              pEl.innerText = '';
+              pEl.innerHTML = '';
             }
           }
         }
