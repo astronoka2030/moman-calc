@@ -263,7 +263,6 @@ function clearAll() {
     calc();
   }
 }
-
 function calc() {
   saveInputs();
   let grandTotal = 0;
@@ -420,13 +419,27 @@ function calc() {
         }
         else {
           const num = parseNum(document.getElementById(item.id)?.value);
+          
+          // 技巧ボーナス反映後の合計pt（日・全体の合計に加算される値）
           itemPt = num * item.unit_pt * mult;
-          const boostedUnit = item.unit_pt * mult;
-          const unitStr = (boostedUnit % 1 === 0) ? boostedUnit : boostedUnit.toFixed(2);
-          const unitDisp = mult > 1 ? ` (基本:${item.unit_pt}pt → 反映:${unitStr}pt/個)` : '';
+          
+          // 技巧ボーナスなし(基本)の合計値
+          const baseTotal = num * item.unit_pt;
 
           const pEl = document.getElementById(`${item.id}-p`);
-          if (pEl) pEl.innerText = num ? `${num.toLocaleString()}個${unitDisp} ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt` : '';
+          if (pEl) {
+            if (num) {
+              // 技巧ボーナスが効いている場合は「基本: 〇〇 ➔ 反映後pt」を表示
+              if (mult > 1) {
+                pEl.innerText = `基本: ${baseTotal.toLocaleString()} ➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt`;
+              } else {
+                // 技巧ボーナスがない場合は結果だけをシンプルに表示
+                pEl.innerText = `➔ ${itemPt.toLocaleString(undefined, {maximumFractionDigits: 1})} pt`;
+              }
+            } else {
+              pEl.innerText = '';
+            }
+          }
         }
 
         dayTotal += itemPt;
